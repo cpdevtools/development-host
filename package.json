@@ -1,6 +1,6 @@
 {
   "name": "@cpdevools/development-host",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "repository": "https://github.com/cpdevools/development-host",
   "typings": "index.d.ts",
   "main": "index.js",
@@ -24,6 +24,8 @@
     "release": "run-s release:*",
     "release:build": "pnpm run build",
     "release:publish": "pnpm publish ./dist/pack --access public --publish-branch 'release/latest'",
+    "npm:release": "run-s npm:release:*",
+    "npm:release:publish": "pnpm publish ./dist --access public --publish-branch 'release/latest'",
     "fix": "run-s fix:*",
     "fix:prettier": "prettier --write --ignore-unknown .",
     "pre-commit": "echo pre-commit",
