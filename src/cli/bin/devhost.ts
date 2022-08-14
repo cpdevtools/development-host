@@ -8,8 +8,8 @@ import { hideBin } from "yargs/helpers";
 (async () => {
   try {
     await yargs(hideBin(process.argv))
-      .scriptName("devenv")
-      .commandDir("../commands/devenv", { extensions: ["js"], recurse: true })
+      .scriptName("devhost")
+      .commandDir("../commands/devhost", { extensions: ["js"], recurse: true })
       .parse();
   } catch (e) {
     console.error(e);
