@@ -10,4 +10,5 @@ setlocal
 
   winget install -e --id OpenJS.NodeJS.LTS
   npm i --location=global @cpdevtools/development-host@latest
+  devhost postinstall
 endlocal
