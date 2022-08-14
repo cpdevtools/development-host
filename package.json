@@ -1,6 +1,6 @@
 {
   "name": "@cpdevtools/development-host",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "repository": "https://github.com/cpdevtools/development-host",
   "typings": "index.d.ts",
   "main": "index.js",
@@ -8,6 +8,7 @@
     "devhost": "cli/bin/devhost.js"
   },
   "scripts": {
+    "postinstall": "devhost install",
     "prepare": "run-s prepare:* && husky install",
     "prepare:husky": "husky install",
     "prepare:link-util": "pnpm link --global @cpdevtools/lib-node-utilities",
