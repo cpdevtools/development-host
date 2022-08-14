@@ -83,6 +83,7 @@ jobs:
 
       - name: Publish Libraries to Npm
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN  }}
 
         run: pnpm run npm:release
