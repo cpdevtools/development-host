@@ -1,7 +1,7 @@
 {
-  "name": "@cpdevools/development-host",
+  "name": "@cpdevtools/development-host",
   "version": "0.2.0",
-  "repository": "https://github.com/cpdevools/development-host",
+  "repository": "https://github.com/cpdevtools/development-host",
   "typings": "index.d.ts",
   "main": "index.js",
   "bin": {
