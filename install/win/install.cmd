@@ -8,7 +8,6 @@ setlocal
   echo ************************************************************
   echo [0m
 
-  winget install -e --id OpenJS.NodeJS.LTS
-  npm i --location=global @cpdevtools/development-host@latest
-  devhost postinstall
+  call winget install -e --id OpenJS.NodeJS.LTS
+  call npm i --location=global @cpdevtools/development-host@latest
 endlocal

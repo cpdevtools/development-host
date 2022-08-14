@@ -1,8 +1,8 @@
-import { CommandModule } from "yargs";
 import { sleep } from "@cpdevtools/lib-node-utilities";
+import { CommandModule } from "yargs";
 
 export const PostInstallCommand: CommandModule = {
-  command: "postinstall",
+  command: "install",
   describe: false,
   builder: (yargs) => yargs,
   handler: async (args): Promise<void> => {
