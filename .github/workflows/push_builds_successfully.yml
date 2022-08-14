@@ -1,0 +1,38 @@
+name: Builds successfully
+
+on:
+  push:
+    branches:
+      - "*"
+      - "!release/latest"
+      - "!release/v*"
+
+env:
+  NODE_VERSION: 16.x
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  check-library-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7.6.0
+          run_install: false
+
+      - uses: actions/setup-node@v3
+        with:
+          registry-url: https://npm.pkg.github.com/
+          node-version: "${{ env.NODE_VERSION }}"
+          cache: pnpm
+
+      - name: Init
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+        run: pnpm i --ignore-scripts --frozen-lockfile
+
+      - name: Build
+        run: pnpm run pack
