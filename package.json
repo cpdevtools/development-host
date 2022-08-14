@@ -5,7 +5,7 @@
   "typings": "index.d.ts",
   "main": "index.js",
   "bin": {
-    "devenv": "cli/bin/devenv.js"
+    "devhost": "cli/bin/devhost.js"
   },
   "scripts": {
     "prepare": "run-s prepare:* && husky install",
