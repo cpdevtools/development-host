@@ -1,12 +1,12 @@
 import { CommandModule } from "yargs";
 
-export const InstallCommand: CommandModule = {
-  command: "install",
-  describe: "install",
+export const PostInstallCommand: CommandModule = {
+  command: "postinstall",
+  describe: false,
   builder: (yargs) => yargs,
   handler: async (args): Promise<void> => {
     console.log("Windows Installer");
   },
 };
 
-module.exports = InstallCommand;
+module.exports = PostInstallCommand;
