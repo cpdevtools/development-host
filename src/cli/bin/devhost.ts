@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import { sleep } from "@cpdevtools/lib-node-utilities";
+import os from "os";
 import { exit } from "process";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
@@ -9,7 +10,7 @@ import { hideBin } from "yargs/helpers";
   try {
     await yargs(hideBin(process.argv))
       .scriptName("devhost")
-      .commandDir("../commands/devhost", { extensions: ["js"], recurse: true })
+      .commandDir(`../commands/${os.platform() === "win32" ? "win" : "linux"}`, { extensions: ["js"], recurse: true })
       .parse();
   } catch (e) {
     console.error(e);
