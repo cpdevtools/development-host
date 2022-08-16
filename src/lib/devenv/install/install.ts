@@ -20,6 +20,7 @@ import { exit } from "process";
 
 import sha256File from "sha256-file";
 
+const INSTALL_NAME = "DevelopmentContainerHost";
 const INSTALL_TEMP_DIR = ".temp";
 const INSTALL_DIR = "install";
 const INSTALL_UBUNTU_URL = "https://wslstorestorage.blob.core.windows.net/wslblob/Ubuntu2204-220620.AppxBundle";
@@ -35,7 +36,7 @@ async function runTasks(tasks: Task[]) {
   for (let i = 0; i < tasks.length; i++) {
     const task = tasks[i];
     const restart = await task();
-    await runOnceAfterRestart("DevelopmentHostInstaller", `devhost install -r ${i + 1}`);
+    await runOnceAfterRestart(INSTALL_NAME, `devhost install -r ${i + 1}`);
     // tasks optionally return a boolean that determines restart behavior
     // if true then prompt to reboot, on Y reboot, on N exit process
     // if false then reboot without prompt
@@ -46,7 +47,7 @@ async function runTasks(tasks: Task[]) {
       exit(0);
     }
   }
-  await removeRunOnceAfterRestart("DevelopmentHostInstaller");
+  await removeRunOnceAfterRestart(INSTALL_NAME);
 }
 
 export async function installOnWindows(resumeOn: number = 0) {
@@ -72,7 +73,7 @@ export async function installOnWindows(resumeOn: number = 0) {
 }
 
 async function isContainerHostInstalled() {
-  return await isWslDistroInstalled("DevelopmentContainerHost");
+  return await isWslDistroInstalled(INSTALL_NAME);
 }
 
 async function installUbuntuWsl() {
@@ -80,13 +81,13 @@ async function installUbuntuWsl() {
     type: "input",
     name: "dir",
     message: "Install Directory?",
-    default: "C:\\ProgramData\\DevelopmentContainerHost",
+    default: `C:\\ProgramData\\${INSTALL_NAME}`,
   });
-  const dir = answers.dir || "C:\\ProgramData\\DevelopmentContainerHost";
+  const dir = answers.dir || `C:\\ProgramData\\${INSTALL_NAME}`;
   await mkdir(dir, { recursive: true });
   await downloadUbuntuWsl(dir);
 
-  await exec(`wsl.exe --import DevelopmentContainerHost ${dir} ${path.join(dir, "install", "install.tar.gz")} `);
+  await exec(`wsl.exe --import ${INSTALL_NAME} ${dir} ${path.join(dir, "install", "install.tar.gz")} `);
 
   answers = {};
   while (!answers.username) {
@@ -101,9 +102,9 @@ async function installUbuntuWsl() {
 }
 
 async function setupUsername(username: string) {
-  await exec(`wsl.exe -d DevlopmentContainerHost --cd ~ bash -ic "adduser ${username} && usermod -aG sudo ${username}"`);
+  await exec(`wsl.exe -d ${INSTALL_NAME} --cd ~ bash -ic "adduser ${username} && usermod -aG sudo ${username}"`);
 
-  const confPath = "\\\\wsl.localhost\\DevlopmentContainerHost\\etc\\wsl.conf";
+  const confPath = `\\\\wsl.localhost\\${INSTALL_NAME}\\etc\\wsl.conf`;
   let conf: any = {
     user: {
       default: username,
