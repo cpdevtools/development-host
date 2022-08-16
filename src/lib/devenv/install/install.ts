@@ -9,6 +9,7 @@ import {
   runOnceAfterRestart,
   updateWSL,
 } from "@cpdevtools/lib-node-utilities";
+import chalk from "chalk";
 
 import { existsSync } from "fs";
 import { mkdir, readFile, writeFile } from "fs/promises";
@@ -54,22 +55,29 @@ export async function installOnWindows(resumeOn: number = 0) {
   const tasks: Task[] = [
     async () => {
       if (!(await isWslInstalled())) {
+        console.info(chalk.cyan(`Installing WSL...`));
         await installWSL();
+        console.info(chalk.cyan(`Installed WSL.`));
         return true;
       }
     },
     async () => {
+      console.info(chalk.cyan(`Updating WSL...`));
       await updateWSL();
+      console.info(chalk.cyan(`Updated WSL.`));
     },
     async () => {
-      console.log("Install Ubuntu");
       if (!(await isContainerHostInstalled())) {
+        console.info(chalk.cyan(`Installing Ubuntu...`));
         await installUbuntuWsl();
+        console.info(chalk.cyan(`Installed Ubuntu.`));
       }
     },
   ];
 
+  console.info(chalk.cyan(`Installing ${INSTALL_NAME} on Windows...`));
   await runTasks(tasks.slice(resumeOn));
+  console.info(chalk.green(`Installed ${INSTALL_NAME} on Windows.`));
 }
 
 async function isContainerHostInstalled() {
@@ -85,23 +93,30 @@ async function installUbuntuWsl() {
   });
   const dir = answers.dir || `C:\\ProgramData\\${INSTALL_NAME}`;
   await mkdir(dir, { recursive: true });
+
+  console.info(chalk.bgBlueBright(`Downloading Ubuntu...`));
   await downloadUbuntuWsl(dir);
+  console.info(chalk.bgBlueBright(`Downloaded Ubuntu.`));
 
+  console.info(chalk.bgBlueBright(`Initializing Ubuntu...`));
   await exec(`wsl.exe --import ${INSTALL_NAME} ${dir} ${path.join(dir, "install", "install.tar.gz")} `);
-
-  answers = {};
-  while (!answers.username) {
-    answers = await inquirer.prompt({
-      type: "input",
-      name: "username",
-      message: "username?",
-    });
-  }
-
-  await setupUsername(answers.username);
+  await setupUsername();
+  console.info(chalk.bgBlueBright(`Initialized Ubuntu.`));
 }
 
-async function setupUsername(username: string) {
+async function setupUsername() {
+  console.info(chalk.bgBlueBright(`Create ubuntu user:`));
+  let username: string = "";
+  while (!username) {
+    const answers = await inquirer.prompt({
+      type: "input",
+      name: "username",
+      message: "Username?",
+    });
+    username = answers.username;
+  }
+
+  console.info(chalk.bgBlueBright(`Adding user ${username}...`));
   await exec(`wsl.exe -d ${INSTALL_NAME} --cd ~ bash -ic "adduser ${username} && usermod -aG sudo ${username}"`);
 
   const confPath = `\\\\wsl.localhost\\${INSTALL_NAME}\\etc\\wsl.conf`;
@@ -116,6 +131,7 @@ async function setupUsername(username: string) {
     conf.user.default = username;
   }
   await writeFile(confPath, ini.stringify(conf), { encoding: "utf-8" });
+  console.info(chalk.bgBlueBright(`Added user ${username}.`));
 }
 
 async function downloadUbuntuWsl(dir: string) {
