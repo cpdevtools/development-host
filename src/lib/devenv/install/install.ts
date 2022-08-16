@@ -11,12 +11,20 @@ import {
 } from "@cpdevtools/lib-node-utilities";
 
 import { existsSync } from "fs";
-import { mkdir, readFile, rm, writeFile } from "fs/promises";
+import { mkdir, readFile, writeFile } from "fs/promises";
+import ini from "ini";
 import inquirer from "inquirer";
 import Zip from "node-stream-zip";
 import path from "path";
 import { exit } from "process";
-import ini from "ini";
+
+const INSTALL_TEMP_DIR = ".temp";
+const INSTALL_DIR = "install";
+const INSTALL_UBUNTU_URL = "https://wslstorestorage.blob.core.windows.net/wslblob/Ubuntu2204-220620.AppxBundle";
+const INSTALL_UBUNTU_DOWNLOAD_FILE = path.join(INSTALL_TEMP_DIR, "ubuntu.bundle.zip");
+const INSTALL_UBUNTU_X86_DEST_FILE = path.join(INSTALL_TEMP_DIR, "ubuntu.x86.zip");
+const INSTALL_UBUNTU_X86_SOURCE_FILE = "Ubuntu_2204.0.10.0_x64.appx";
+const INSTALL_UBUNTU_INSTALL_FILE = path.join(INSTALL_DIR, "install.tar.gz");
 
 type Task = () => void | boolean | Promise<void | boolean>;
 
@@ -106,40 +114,44 @@ async function setupUsername(username: string) {
 }
 
 async function downloadUbuntuWsl(dir: string) {
-  const installDir = path.join(dir, "install");
-  if (!existsSync(path.join(installDir, "install.tar.gz"))) {
-    const tmpDir = path.join(dir, "tmp");
+  const installDir = path.join(dir, INSTALL_DIR);
+  const ubuntuInstallFile = path.join(dir, INSTALL_UBUNTU_INSTALL_FILE);
+
+  if (!existsSync(ubuntuInstallFile)) {
+    const tmpDir = path.join(dir, INSTALL_TEMP_DIR);
     try {
       await mkdir(tmpDir, { recursive: true });
       await mkdir(installDir, { recursive: true });
 
-      const dlPath = path.join(tmpDir, "ubuntu.zip");
+      const ubuntuDownloadFile = path.join(dir, INSTALL_UBUNTU_DOWNLOAD_FILE);
 
-      const dl = new FileDownload("https://wslstorestorage.blob.core.windows.net/wslblob/Ubuntu2204-220620.AppxBundle", dlPath);
+      const dl = new FileDownload(INSTALL_UBUNTU_URL, ubuntuDownloadFile);
       await dl.download(true);
 
       await extractUbuntu(dir);
     } finally {
-      await rm(tmpDir, { force: true, recursive: true });
+      //await rm(tmpDir, { force: true, recursive: true });
     }
   }
 }
 
 async function extractUbuntu(dir: string) {
-  const tmpDir = path.join(dir, "tmp");
-  const installDir = path.join(dir, "install");
+  const tmpDir = path.join(dir, INSTALL_TEMP_DIR);
+  const installDir = path.join(dir, INSTALL_DIR);
 
-  const dlPath = path.join(tmpDir, "ubuntu.bundle.zip");
-  const extractPath = path.join(tmpDir, "ubuntu.x64.zip");
+  const ubuntuDownloadFile = path.join(dir, INSTALL_UBUNTU_DOWNLOAD_FILE);
 
-  await extractUbuntuOuter(dlPath, extractPath);
+  const extractPath = path.join(dir, INSTALL_UBUNTU_X86_DEST_FILE);
+
+  await extractUbuntuOuter(ubuntuDownloadFile, extractPath);
+
   await extractUbuntuInner(extractPath, installDir);
 }
 
-function extractUbuntuOuter(dlPath: string, extractPath: string) {
+function extractUbuntuOuter(ubuntuDownloadFile: string, extractPath: string) {
   return new Promise<void>((res, rej) => {
     const zip = new Zip({
-      file: dlPath,
+      file: ubuntuDownloadFile,
       storeEntries: true,
     });
     zip.on("error", function (err) {
@@ -147,11 +159,11 @@ function extractUbuntuOuter(dlPath: string, extractPath: string) {
       rej(err);
     });
     zip.on("entry", function (entry) {
-      if (entry.name === "Ubuntu_2204.0.10.0_x64.appx") {
-        console.info(`Extracting 'Ubuntu_2204.0.10.0_x64.appx'...`);
+      if (entry.name === INSTALL_UBUNTU_X86_SOURCE_FILE) {
+        console.info(`Extracting '${INSTALL_UBUNTU_X86_SOURCE_FILE}'...`);
         zip.extract(entry, extractPath, (err, r) => {
           if (!err) {
-            console.info(`Extracted 'Ubuntu_2204.0.10.0_x64.appx'.`);
+            console.info(`Extracted '${INSTALL_UBUNTU_X86_SOURCE_FILE}'.`);
             res();
           } else {
             rej(err);
@@ -161,10 +173,10 @@ function extractUbuntuOuter(dlPath: string, extractPath: string) {
     });
   });
 }
-function extractUbuntuInner(dlPath: string, extractPath: string) {
+function extractUbuntuInner(ubuntuZipPath: string, installDir: string) {
   return new Promise<void>((res, rej) => {
     const zip = new Zip({
-      file: dlPath,
+      file: ubuntuZipPath,
       storeEntries: true,
     });
     zip.on("error", function (err) {
@@ -175,8 +187,8 @@ function extractUbuntuInner(dlPath: string, extractPath: string) {
 
     zip.on("entry", async function (entry) {
       console.info(`Extracting '${entry.name}'...`);
-      const ePath = path.normalize(path.join(extractPath, entry.name));
-      if (ePath.startsWith(extractPath)) {
+      const ePath = path.normalize(path.join(installDir, entry.name));
+      if (ePath.startsWith(installDir)) {
         if (entry.isFile) {
           await mkdir(path.dirname(ePath), { recursive: true });
           zip.extract(entry, ePath, (err, r) => {
