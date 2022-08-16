@@ -1,6 +1,6 @@
 {
   "name": "@cpdevtools/development-host",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "repository": "https://github.com/cpdevtools/development-host",
   "typings": "index.d.ts",
   "main": "index.js",
@@ -35,6 +35,7 @@
     "start:build": "pnpm run watch:build"
   },
   "devDependencies": {
+    "@types/cli-progress": "^3.11.0",
     "@types/inquirer": "^8.2.2",
     "@types/lodash": "^4.14.182",
     "@types/yargs": "^17.0.10",
@@ -54,14 +55,17 @@
     "*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
-    "@cpdevtools/lib-node-utilities": "^0.2.0",
+    "@cpdevtools/lib-node-utilities": "^0.4.0",
     "@types/node": "^18.6.1",
+    "axios": "^0.27.2",
     "chalk": "^4.1.2",
+    "cli-progress": "^3.11.2",
     "fast-glob": "^3.2.11",
     "inquirer": "^8.2.4",
     "linq": "^4.0.0",
     "lodash": "^4.17.21",
     "rxjs": "^7.5.6",
+    "strip-color": "^0.1.0",
     "tslib": "^2.4.0",
     "yaml": "^2.1.1",
     "yargs": "^17.5.1"
