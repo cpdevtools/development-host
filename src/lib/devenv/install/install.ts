@@ -85,7 +85,8 @@ async function installUbuntuWsl() {
   const dir = answers.dir || "C:\\ProgramData\\DevelopmentContainerHost";
   await mkdir(dir, { recursive: true });
   await downloadUbuntuWsl(dir);
-  await exec(`wsl.exe --import DevelopmentContainerHost ${path.join(dir, "install", "install.tar.gz")} ${dir}`);
+
+  await exec(`wsl.exe --import DevelopmentContainerHost ${dir} ${path.join(dir, "install", "install.tar.gz")} `);
 
   answers = {};
   while (!answers.username) {
