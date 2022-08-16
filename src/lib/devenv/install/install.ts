@@ -124,9 +124,11 @@ async function downloadUbuntuWsl(dir: string) {
       await mkdir(installDir, { recursive: true });
 
       const ubuntuDownloadFile = path.join(dir, INSTALL_UBUNTU_DOWNLOAD_FILE);
-
-      const dl = new FileDownload(INSTALL_UBUNTU_URL, ubuntuDownloadFile);
-      await dl.download(true);
+      if (!existsSync(ubuntuDownloadFile)) {
+        // TEMP or checksum needed
+        const dl = new FileDownload(INSTALL_UBUNTU_URL, ubuntuDownloadFile);
+        await dl.download(true);
+      }
 
       await extractUbuntu(dir);
     } finally {
