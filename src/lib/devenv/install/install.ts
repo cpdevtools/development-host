@@ -18,9 +18,12 @@ import Zip from "node-stream-zip";
 import path from "path";
 import { exit } from "process";
 
+import sha256File from "sha256-file";
+
 const INSTALL_TEMP_DIR = ".temp";
 const INSTALL_DIR = "install";
 const INSTALL_UBUNTU_URL = "https://wslstorestorage.blob.core.windows.net/wslblob/Ubuntu2204-220620.AppxBundle";
+const INSTALL_UBUNTU_SHA = "dd60bd853d15fbd14480e5d4e3c53d8b14710a43eb45f82558201a3dcdfe51b1";
 const INSTALL_UBUNTU_DOWNLOAD_FILE = path.join(INSTALL_TEMP_DIR, "ubuntu.bundle.zip");
 const INSTALL_UBUNTU_X86_DEST_FILE = path.join(INSTALL_TEMP_DIR, "ubuntu.x86.zip");
 const INSTALL_UBUNTU_X86_SOURCE_FILE = "Ubuntu_2204.0.10.0_x64.appx";
@@ -124,10 +127,29 @@ async function downloadUbuntuWsl(dir: string) {
       await mkdir(installDir, { recursive: true });
 
       const ubuntuDownloadFile = path.join(dir, INSTALL_UBUNTU_DOWNLOAD_FILE);
-      if (!existsSync(ubuntuDownloadFile)) {
-        // TEMP or checksum needed
+
+      let download = true;
+
+      if (existsSync(ubuntuDownloadFile)) {
+        download = false;
+        const check = await new Promise<string>((res, rej) =>
+          sha256File(ubuntuDownloadFile, (error, check) => (error ? rej(error) : res(check!)))
+        );
+        if (check !== INSTALL_UBUNTU_SHA) {
+          download = true;
+        }
+      }
+
+      if (download) {
         const dl = new FileDownload(INSTALL_UBUNTU_URL, ubuntuDownloadFile);
         await dl.download(true);
+
+        const check = await new Promise<string>((res, rej) =>
+          sha256File(ubuntuDownloadFile, (error, check) => (error ? rej(error) : res(check!)))
+        );
+        if (check !== INSTALL_UBUNTU_SHA) {
+          throw new Error(`'${ubuntuDownloadFile}' failed to match checksum '${INSTALL_UBUNTU_SHA}'. Was '${check}'`);
+        }
       }
 
       await extractUbuntu(dir);
