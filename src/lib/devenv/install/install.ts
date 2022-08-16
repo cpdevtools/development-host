@@ -75,7 +75,7 @@ export async function installOnWindows(resumeOn: number = 0) {
     },
   ];
 
-  console.info(chalk.cyan(`Installing ${INSTALL_NAME} on Windows...`));
+  console.info(chalk.green(`Installing ${INSTALL_NAME} on Windows...`));
   await runTasks(tasks.slice(resumeOn));
   console.info(chalk.green(`Installed ${INSTALL_NAME} on Windows.`));
 }
