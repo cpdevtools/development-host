@@ -67,10 +67,14 @@ export async function installOnWindows(resumeOn: number = 0) {
       console.info(chalk.cyan(`Updated WSL.`));
     },
     async () => {
-      if (!(await isContainerHostInstalled())) {
+      console.info(chalk.cyan(`Checking for Ubuntu...`));
+      const isHostInstalled = await isContainerHostInstalled();
+      if (!isHostInstalled) {
         console.info(chalk.cyan(`Installing Ubuntu...`));
         await installUbuntuWsl();
         console.info(chalk.cyan(`Installed Ubuntu.`));
+      } else {
+        console.info(chalk.cyan(`found.`));
       }
     },
   ];
