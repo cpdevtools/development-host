@@ -8,6 +8,7 @@ import {
   runOnceAfterRestart,
   updateWSL,
 } from "@cpdevtools/lib-node-utilities";
+import path from "path";
 import { exit } from "process";
 
 type Task = () => void | boolean | Promise<void | boolean>;
@@ -63,7 +64,7 @@ async function installUbuntuWsl() {
 async function downloadUbuntuWsl() {
   const dl = new FileDownload(
     "https://wslstorestorage.blob.core.windows.net/wslblob/Ubuntu2204-220620.AppxBundle",
-    "%temp%Ubuntu2204-220620.AppxBundle.zip"
+    path.join(process.env.temp!, "Ubuntu2204-220620.AppxBundle.zip")
   );
   await dl.download(true);
 }
