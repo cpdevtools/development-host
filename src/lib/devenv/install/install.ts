@@ -77,11 +77,22 @@ export async function installOnWindows(resumeOn: number = 0) {
         console.info(chalk.cyan(`found.`));
       }
     },
+    async () => {
+      console.info(chalk.cyan(`Installing ${INSTALL_NAME} cli...`));
+      await installLinux();
+      console.info(chalk.cyan(`Installed ${INSTALL_NAME} cli.`));
+    },
   ];
 
   console.info(chalk.green(`Installing ${INSTALL_NAME} on Windows...`));
   await runTasks(tasks.slice(resumeOn));
   console.info(chalk.green(`Installed ${INSTALL_NAME} on Windows.`));
+}
+
+async function installLinux() {
+  await exec(
+    `wsl.exe -d ${INSTALL_NAME} --cd ~ bash -ic "curl https://raw.githubusercontent.com/cpdevtools/development-host/main/install/linux/install.sh | bash"`
+  );
 }
 
 async function isContainerHostInstalled() {
