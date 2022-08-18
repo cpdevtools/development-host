@@ -38,6 +38,7 @@ const DockerInstaller: Installer = {
         if (integratedWslDistros.indexOf(INSTALL_NAME) === -1) {
           integratedWslDistros.push(INSTALL_NAME);
         }
+
         dockerConfig.integratedWslDistros = integratedWslDistros;
         await writeJsonFile(dockerConfigPath, dockerConfig);
         await restartDockerDesktop();
