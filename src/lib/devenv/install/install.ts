@@ -22,7 +22,7 @@ import { exit } from "process";
 import sha256File from "sha256-file";
 import { installOrUpdateCore } from "./update";
 
-const INSTALL_NAME = "DevelopmentContainerHost";
+export const INSTALL_NAME = "DevelopmentContainerHost";
 const INSTALL_TEMP_DIR = ".temp";
 const INSTALL_DIR = "install";
 const INSTALL_UBUNTU_URL = "https://wslstorestorage.blob.core.windows.net/wslblob/Ubuntu2204-220620.AppxBundle";
