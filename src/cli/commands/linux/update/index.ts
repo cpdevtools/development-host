@@ -1,5 +1,5 @@
-import { installOrUpdateCore, uninstallCore } from "../../../../lib/devenv/install/update";
 import { CommandModule } from "yargs";
+import { installOrUpdateCore } from "../../../../lib/devenv/install/update";
 
 export const UpdateCommand: CommandModule = {
   command: "update",
