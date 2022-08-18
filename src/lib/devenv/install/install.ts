@@ -20,6 +20,7 @@ import path from "path";
 import { exit } from "process";
 
 import sha256File from "sha256-file";
+import { installOrUpdateCore } from "./update";
 
 const INSTALL_NAME = "DevelopmentContainerHost";
 const INSTALL_TEMP_DIR = ".temp";
@@ -79,7 +80,7 @@ export async function installOnWindows(resumeOn: number = 0) {
     },
     async () => {
       console.info(chalk.cyan(`Installing ${INSTALL_NAME} cli...`));
-      await installLinux();
+      await installCliOnLinux();
       console.info(chalk.cyan(`Installed ${INSTALL_NAME} cli.`));
     },
   ];
@@ -89,7 +90,7 @@ export async function installOnWindows(resumeOn: number = 0) {
   console.info(chalk.green(`Installed ${INSTALL_NAME} on Windows.`));
 }
 
-async function installLinux() {
+async function installCliOnLinux() {
   await exec(
     `wsl.exe -d ${INSTALL_NAME} --cd ~ bash -ic "curl https://raw.githubusercontent.com/cpdevtools/development-host/main/install/linux/install.sh | bash"`
   );
@@ -263,4 +264,8 @@ function extractUbuntuInner(ubuntuZipPath: string, installDir: string) {
       }
     });
   });
+}
+
+export async function install() {
+  await installOrUpdateCore();
 }

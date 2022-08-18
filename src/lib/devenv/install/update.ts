@@ -16,13 +16,9 @@ export async function updateApplications() {
 }
 
 export async function updateCore(): Promise<void> {
-  await GlobalInstallerService.update((await import("../../_install_data_/lists/core.list")).default);
+  await GlobalInstallerService.update((await import("../../_install_data_/lists/core-update.list")).default);
 }
 
 export async function installOrUpdateCore(): Promise<void> {
-  await GlobalInstallerService.installOrUpdate((await import("../../_install_data_/lists/core.list")).default);
-}
-
-export async function uninstallCore(): Promise<void> {
-  await GlobalInstallerService.uninstall((await import("../../_install_data_/lists/core.list")).default);
+  await GlobalInstallerService.installOrUpdate((await import("../../_install_data_/lists/core-install.list")).default);
 }
