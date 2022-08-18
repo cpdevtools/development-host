@@ -1,7 +1,9 @@
 import {
   AfterInstall,
+  AfterInstallOrUpdate,
   AptInstaller,
   BeforeInstall,
+  BeforeInstallOrUpdate,
   getDockerDesktopConfigPath,
   Installer,
   killDockerDesktop,
@@ -18,15 +20,16 @@ const DockerInstaller: Installer = {
   name: "Docker",
   categories: ["core"],
   platforms: {
-    [Platform.WSL]: class DockerWslInstaller extends WingetInstaller implements BeforeInstall, AfterInstall {
+    [Platform.WSL]: class DockerWslInstaller extends WingetInstaller implements BeforeInstallOrUpdate, AfterInstallOrUpdate {
       constructor() {
         super("Docker.DockerDesktop", "Docker Desktop");
       }
-      async beforeInstall(): Promise<void> {
+
+      async beforeInstallOrUpdate(): Promise<void> {
         await killDockerDesktop();
       }
 
-      async afterInstall(): Promise<void> {
+      async afterInstallOrUpdate(): Promise<void> {
         await startDockerDesktop();
         const dockerConfigPath = await getDockerDesktopConfigPath();
         const dockerConfig = await readJsonFile(dockerConfigPath);
