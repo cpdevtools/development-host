@@ -1,12 +1,29 @@
-import { CommandModule } from "yargs";
-import { installOrUpdateCore } from "../../../../lib/devenv/install/update";
+import { exec } from "@cpdevtools/lib-node-utilities";
+import { exit } from "process";
+import { asapScheduler } from "rxjs";
+import { boolean, CommandModule } from "yargs";
+import { installOrUpdateCore, updateSelf } from "../../../../lib/devenv/install/update";
 
-export const UpdateCommand: CommandModule = {
+interface UpdateCommandOptions {
+  afterSelfUpdate: boolean;
+}
+export const UpdateCommand: CommandModule<{}, UpdateCommandOptions> = {
   command: "update",
   describe: "update",
-  builder: (yargs) => yargs,
+  builder: (yargs) =>
+    yargs.option("afterSelfUpdate", {
+      type: "boolean",
+      hidden: true,
+      default: false,
+    }),
   handler: async (args): Promise<void> => {
-    await installOrUpdateCore();
+    if (!args.afterSelfUpdate) {
+      await updateSelf();
+      await exec(`devhost update --after-self-update`, { cwd: process.cwd() });
+      exit();
+    } else {
+      await installOrUpdateCore();
+    }
   },
 };
 

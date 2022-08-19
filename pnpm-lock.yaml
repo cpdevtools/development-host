@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  "@cpdevtools/lib-node-utilities": ^0.4.8
+  "@cpdevtools/lib-node-utilities": ^0.4.9
   "@types/cli-progress": ^3.11.0
   "@types/ini": ^1.3.31
   "@types/inquirer": ^8.2.2
@@ -35,7 +35,7 @@ specifiers:
   yargs: ^17.5.1
 
 dependencies:
-  "@cpdevtools/lib-node-utilities": 0.4.8
+  "@cpdevtools/lib-node-utilities": 0.4.9
   "@types/node": 18.7.3
   axios: 0.27.2
   chalk: 4.1.2
@@ -92,11 +92,11 @@ packages:
       js-tokens: 4.0.0
     dev: true
 
-  /@cpdevtools/lib-node-utilities/0.4.8:
+  /@cpdevtools/lib-node-utilities/0.4.9:
     resolution:
       {
-        integrity: sha512-MOLOW2xOU+pUT4OU9OfrQ7CbuojBUw4MsY5RXQGhspQcfi20ssvuyRUcvklo+Zm0hi8o2xi8Dj/8K00KLqSHSA==,
-        tarball: https://npm.pkg.github.com/download/@cpdevtools/lib-node-utilities/0.4.8/153805d0d92e9ed279b9f74d6768d7c3a1351a5c3448e19a7685a60257ce39f8,
+        integrity: sha512-lbB968Lv0N469Hi0T/s2AnD2aHPvNl/CwBBFS35QTKXRvGdh2bYML5BxV3rSYPMVdF6gP6j+rlsfjAjThSbYxQ==,
+        tarball: https://npm.pkg.github.com/download/@cpdevtools/lib-node-utilities/0.4.9/a6dc07c4e541a0d0e70ca52f0597e5bcd563e076ee99264bb6def5476a267952,
       }
     dependencies:
       "@octokit/rest": 19.0.3

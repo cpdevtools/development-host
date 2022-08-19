@@ -1,13 +1,3 @@
-import { CommandModule } from "yargs";
-import { install } from "../../../../lib/devenv/install/install";
+import { InstallCommand } from "./InstallCommand";
 
-export const InstallCommand: CommandModule = {
-  command: "install",
-  describe: false,
-  builder: (yargs) => yargs,
-  handler: async (args): Promise<void> => {
-    install();
-  },
-};
-
-module.exports = InstallCommand;
+module.exports = [InstallCommand];

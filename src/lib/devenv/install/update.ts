@@ -4,7 +4,7 @@ import path from "path";
 GlobalInstallerService.scanDir(path.join(__dirname, "../../_install_data_/installers"));
 
 export async function updateSelf() {
-  await exec(`npm i -g @cpdevtools/development-host@latest`);
+  await GlobalInstallerService.update((await import("../../_install_data_/lists/self-update.list")).default);
 }
 
 export async function updateHost() {
@@ -20,5 +20,5 @@ export async function updateCore(): Promise<void> {
 }
 
 export async function installOrUpdateCore(): Promise<void> {
-  await GlobalInstallerService.installOrUpdate((await import("../../_install_data_/lists/core-install.list")).default);
+  await GlobalInstallerService.installOrUpdate((await import("../../_install_data_/lists/core-update.list")).default);
 }
