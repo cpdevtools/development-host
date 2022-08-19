@@ -116,11 +116,11 @@ async function installUbuntuWsl() {
 
   console.info(chalk.bgBlueBright(`Initializing Ubuntu...`));
   await exec(`wsl.exe --import ${INSTALL_NAME} ${dir} ${path.join(dir, "install", "install.tar.gz")} `);
-  await setupUsername();
+  await setupUser();
   console.info(chalk.bgBlueBright(`Initialized Ubuntu.`));
 }
 
-async function setupUsername() {
+async function setupUser() {
   console.info(chalk.bgBlueBright(`Create ubuntu user:`));
   let username: string = "";
   while (!username) {
@@ -146,8 +146,9 @@ async function setupUsername() {
     conf.user ??= {};
     conf.user.default = username;
   }
-  await writeFile(confPath, ini.stringify(conf), { encoding: "utf-8" });
+  await writeFile(confPath, ini.stringify(conf).replace(/\r\n/g, "\n"), { encoding: "utf-8" });
   console.info(chalk.bgBlueBright(`Added user ${username}.`));
+  await exec(`wsl.exe -t ${INSTALL_NAME}`);
 }
 
 async function downloadUbuntuWsl(dir: string) {
