@@ -140,11 +140,17 @@ async function setupUser() {
     user: {
       default: username,
     },
+    boot: {
+      command: "devhost onstart",
+    },
   };
   if (existsSync(confPath)) {
     conf = ini.parse(await readFile(confPath, { encoding: "utf-8" }));
     conf.user ??= {};
     conf.user.default = username;
+
+    conf.boot ??= {};
+    conf.boot.command = "devhost onstart";
   }
   await writeFile(confPath, ini.stringify(conf).replace(/\r\n/g, "\n"), { encoding: "utf-8" });
   console.info(chalk.bgBlueBright(`Added user ${username}.`));
