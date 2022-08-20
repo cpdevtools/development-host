@@ -4,12 +4,12 @@ import {
   installWSL,
   isWslDistroInstalled,
   isWslInstalled,
+  killDockerDesktop,
   rebootWindows,
   removeRunOnceAfterRestart,
   runOnceAfterRestart,
   updateWSL,
 } from "@cpdevtools/lib-node-utilities";
-import chalk from "chalk";
 
 import { existsSync } from "fs";
 import { mkdir, readFile, writeFile } from "fs/promises";
@@ -20,6 +20,9 @@ import path from "path";
 import { exit } from "process";
 
 import sha256File from "sha256-file";
+import { promptConfig } from "../config";
+import { onStartup } from "../startup/startup";
+import { applicationFooter, subTaskFooter, subTaskHeader, taskFooter, taskHeader } from "../ui/headers";
 import { installOrUpdateCore } from "./update";
 
 export const INSTALL_NAME = "DevelopmentContainerHost";
@@ -55,39 +58,36 @@ async function runTasks(tasks: Task[]) {
 export async function installOnWindows(resumeOn: number = 0) {
   const tasks: Task[] = [
     async () => {
+      await killDockerDesktop();
       if (!(await isWslInstalled())) {
-        console.info(chalk.cyan(`Installing WSL...`));
+        taskHeader(`Installing WSL...`);
         await installWSL();
-        console.info(chalk.cyan(`Installed WSL.`));
+        taskFooter(`Installed WSL`);
         return true;
       }
     },
     async () => {
-      console.info(chalk.cyan(`Updating WSL...`));
+      taskHeader(`Updating WSL`);
       await updateWSL();
-      console.info(chalk.cyan(`Updated WSL.`));
+      taskFooter(`Updated WSL`);
     },
     async () => {
-      console.info(chalk.cyan(`Checking for Ubuntu...`));
       const isHostInstalled = await isContainerHostInstalled();
       if (!isHostInstalled) {
-        console.info(chalk.cyan(`Installing Ubuntu...`));
+        taskHeader(`Installing Ubuntu`);
         await installUbuntuWsl();
-        console.info(chalk.cyan(`Installed Ubuntu.`));
-      } else {
-        console.info(chalk.cyan(`found.`));
+        taskFooter(`Installed Ubuntu`);
       }
     },
     async () => {
-      console.info(chalk.cyan(`Installing ${INSTALL_NAME} cli...`));
+      taskHeader(`Installing ${INSTALL_NAME} cli`);
       await installCliOnLinux();
-      console.info(chalk.cyan(`Installed ${INSTALL_NAME} cli.`));
+      taskFooter(`Installed ${INSTALL_NAME} cli`);
     },
   ];
 
-  console.info(chalk.green(`Installing ${INSTALL_NAME} on Windows...`));
   await runTasks(tasks.slice(resumeOn));
-  console.info(chalk.green(`Installed ${INSTALL_NAME} on Windows.`));
+  applicationFooter(`Finished Installing ${INSTALL_NAME} on Windows`);
 }
 
 async function installCliOnLinux() {
@@ -110,18 +110,17 @@ async function installUbuntuWsl() {
   const dir = answers.dir || `C:\\ProgramData\\${INSTALL_NAME}`;
   await mkdir(dir, { recursive: true });
 
-  console.info(chalk.bgBlueBright(`Downloading Ubuntu...`));
+  subTaskHeader(`Downloading Ubuntu...`);
   await downloadUbuntuWsl(dir);
-  console.info(chalk.bgBlueBright(`Downloaded Ubuntu.`));
+  subTaskFooter(`Downloaded Ubuntu.`);
 
-  console.info(chalk.bgBlueBright(`Initializing Ubuntu...`));
+  subTaskHeader(`Initializing Ubuntu...`);
   await exec(`wsl.exe --import ${INSTALL_NAME} ${dir} ${path.join(dir, "install", "install.tar.gz")} `);
   await setupUser();
-  console.info(chalk.bgBlueBright(`Initialized Ubuntu.`));
+  subTaskFooter(`Initialized Ubuntu.`);
 }
 
 async function setupUser() {
-  console.info(chalk.bgBlueBright(`Create ubuntu user:`));
   let username: string = "";
   while (!username) {
     const answers = await inquirer.prompt({
@@ -132,7 +131,7 @@ async function setupUser() {
     username = answers.username;
   }
 
-  console.info(chalk.bgBlueBright(`Adding user ${username}...`));
+  subTaskHeader(`Adding user ${username}`);
   await exec(`wsl.exe -d ${INSTALL_NAME} --cd ~ bash -ic "adduser ${username} && usermod -aG sudo ${username}"`);
 
   const confPath = `\\\\wsl.localhost\\${INSTALL_NAME}\\etc\\wsl.conf`;
@@ -153,7 +152,7 @@ async function setupUser() {
     conf.boot.command = "devhost onstart";
   }
   await writeFile(confPath, ini.stringify(conf).replace(/\r\n/g, "\n"), { encoding: "utf-8" });
-  console.info(chalk.bgBlueBright(`Added user ${username}.`));
+  subTaskFooter(`Added user ${username}`);
   await exec(`wsl.exe -t ${INSTALL_NAME}`);
 }
 
@@ -225,10 +224,10 @@ function extractUbuntuOuter(ubuntuDownloadFile: string, extractPath: string) {
     });
     zip.on("entry", function (entry) {
       if (entry.name === INSTALL_UBUNTU_X86_SOURCE_FILE) {
-        console.info(`Extracting '${INSTALL_UBUNTU_X86_SOURCE_FILE}'...`);
+        subTaskHeader(`Extracting '${INSTALL_UBUNTU_X86_SOURCE_FILE}'`);
         zip.extract(entry, extractPath, (err, r) => {
           if (!err) {
-            console.info(`Extracted '${INSTALL_UBUNTU_X86_SOURCE_FILE}'.`);
+            subTaskFooter(`Extracted '${INSTALL_UBUNTU_X86_SOURCE_FILE}'`);
             res();
           } else {
             rej(err);
@@ -251,7 +250,7 @@ function extractUbuntuInner(ubuntuZipPath: string, installDir: string) {
     let count = zip.entriesCount;
 
     zip.on("entry", async function (entry) {
-      console.info(`Extracting '${entry.name}'...`);
+      subTaskHeader(`Extracting '${entry.name}'`);
       const ePath = path.normalize(path.join(installDir, entry.name));
       if (ePath.startsWith(installDir)) {
         if (entry.isFile) {
@@ -259,7 +258,7 @@ function extractUbuntuInner(ubuntuZipPath: string, installDir: string) {
           zip.extract(entry, ePath, (err, r) => {
             count--;
             if (!err) {
-              console.info(`Extracted '${ePath}'.`);
+              subTaskFooter(`Extracted '${ePath}'`);
             } else {
               console.error(err);
             }
@@ -275,4 +274,6 @@ function extractUbuntuInner(ubuntuZipPath: string, installDir: string) {
 
 export async function install() {
   await installOrUpdateCore();
+  await promptConfig(true);
+  await onStartup();
 }

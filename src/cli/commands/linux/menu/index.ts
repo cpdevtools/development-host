@@ -7,4 +7,4 @@ const Command: CommandModule = {
   handler: (args: ArgumentsCamelCase<{}>): void | Promise<void> => {},
 };
 
-module.exports = Command;
+export default Command;

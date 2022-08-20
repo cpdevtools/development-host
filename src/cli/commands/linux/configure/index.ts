@@ -1,6 +1,7 @@
 import { toFormattedYaml, ValidationError } from "@cpdevtools/lib-node-utilities";
 import chalk from "chalk";
-import { ArgumentsCamelCase, Argv, CommandModule, exit } from "yargs";
+import { exit } from "process";
+import { ArgumentsCamelCase, Argv, CommandModule } from "yargs";
 import {
   checkConfig,
   getConfigProperty,
@@ -54,7 +55,7 @@ export const CheckConfigCommand: CommandModule<{}, CheckConfigCommandArgs> = {
       const result = await checkConfig();
       if (result.failed) {
         result.errors.forEach((f) => console.error(chalk.red(`Error: ${f.message}`)));
-        exit(1, new ValidationError(result.errors));
+        exit(1);
       }
     } else {
       await promptConfig();
@@ -98,7 +99,7 @@ export const ConfigCommand: CommandModule<{}, ConfigCommandArgs> = {
     }
     if (!(await printConfig())) {
       console.error(chalk.red(`Error: Config file '${USER_CONFIG_PATH}' does not exist.`));
-      exit(1, new Error(`Error: Config file '${USER_CONFIG_PATH}' does not exist.`));
+      exit(1);
     }
   },
 };
@@ -111,4 +112,4 @@ export const ConfigCommandGroup: CommandModule = {
   handler: (args: ArgumentsCamelCase<{}>): void | Promise<void> => {},
 };
 
-module.exports = ConfigCommandGroup;
+export default ConfigCommandGroup;

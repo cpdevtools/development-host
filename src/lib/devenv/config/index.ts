@@ -2,11 +2,12 @@ import { printYamlFile, readYamlFile, ValidationError, ValidationResult, writeYa
 import { existsSync } from "fs";
 import fs from "fs/promises";
 import inquirer, { InputQuestion } from "inquirer";
-import { get, set, unset } from "lodash";
+import lodash from "lodash";
+
 import { homedir } from "os";
 import path from "path";
 
-export const USER_DIRECTORY = path.join(homedir(), ".dev-environment");
+export const USER_DIRECTORY = path.join(homedir(), ".dch");
 export const USER_CONFIG_PATH = path.join(USER_DIRECTORY, "config.yml");
 export const DEFAULT_CONTAINER_ROOT = path.join(USER_DIRECTORY, "containers");
 
@@ -55,7 +56,7 @@ export async function printConfig() {
 
 export async function getConfigProperty<T = unknown>(property: string): Promise<T | undefined> {
   const config = await loadConfig();
-  return get(config, property, null);
+  return lodash.get(config, property, null);
 }
 
 export async function setConfigProperty(property: string, value: any): Promise<void> {
@@ -66,12 +67,12 @@ export async function setConfigProperties(pairs: [string, string][]): Promise<vo
   const config = ((await loadConfig()) ?? {}) as DevEnvironmentConfig;
   for (let [key, val] of pairs) {
     if (val === "undefined") {
-      unset(config, key);
+      lodash.unset(config, key);
     } else {
       try {
         val = JSON.parse(val);
       } catch {}
-      set(config, key, val);
+      lodash.set(config, key, val);
     }
   }
   await saveConfig(config);
@@ -187,6 +188,7 @@ export async function promptConfig(confirm: boolean = true) {
       default: config?.author.name ?? undefined,
     });
   }
+
   if (confirm || isEmpty(config?.author.email)) {
     questions.push({
       name: "author.email",
@@ -196,6 +198,7 @@ export async function promptConfig(confirm: boolean = true) {
       default: config?.author.email ?? undefined,
     });
   }
+
   if (confirm || isEmpty(config?.github.username)) {
     questions.push({
       name: "github.username",
@@ -205,6 +208,7 @@ export async function promptConfig(confirm: boolean = true) {
       default: config?.github.username ?? undefined,
     });
   }
+
   if (confirm || isEmpty(config?.github.token)) {
     questions.push({
       name: "github.token",
@@ -221,6 +225,7 @@ export async function promptConfig(confirm: boolean = true) {
     "github.username": config?.github.username ?? undefined,
     "github.token": config?.github.token ?? undefined,
   });
+
   await setConfigProperties([
     ["author.name", isEmpty(answers["author.name"]) ? null : answers["author.name"]],
     ["author.email", isEmpty(answers["author.email"]) ? null : answers["author.email"]],

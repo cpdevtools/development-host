@@ -1,4 +1,4 @@
-import { prompt } from "inquirer";
+import inquirer from "inquirer";
 import { CommandModule } from "yargs";
 import { removeContainer } from "../../../../lib/devenv/containers";
 export const RemoveContainerCommand: CommandModule<{}, RemoveContainerCommandArgs> = {
@@ -11,7 +11,7 @@ export const RemoveContainerCommand: CommandModule<{}, RemoveContainerCommandArg
       demandOption: true,
     }),
   handler: async (args): Promise<void> => {
-    const answers = await prompt({
+    const answers = await inquirer.prompt({
       type: "confirm",
       name: "remove",
       message: "Are you sure you want to delete this development container? Any Uncommitted data will be lost!",

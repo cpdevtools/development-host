@@ -1,5 +1,9 @@
 import { exec, GlobalInstallerService } from "@cpdevtools/lib-node-utilities";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 GlobalInstallerService.scanDir(path.join(__dirname, "../../_install_data_/installers"));
 
