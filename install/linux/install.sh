@@ -8,5 +8,5 @@ export NVM_DIR="$HOME/.nvm"
 
 nvm install 16
 
-npm i -g typescript ts-node @cpdevtools/development-host@latest
+npm i --location=global typescript ts-node @cpdevtools/development-host@latest
 devhost install
