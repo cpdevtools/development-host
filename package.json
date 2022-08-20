@@ -1,12 +1,13 @@
 {
   "name": "@cpdevtools/development-host",
-  "version": "0.4.34",
+  "version": "0.4.35",
   "repository": "https://github.com/cpdevtools/development-host",
   "typings": "index.d.ts",
   "main": "index.js",
   "type": "module",
   "bin": {
-    "devhost": "cli/bin/devhost.js"
+    "devhost": "cli/bin/devhost.js",
+    "devhost-win": "cli/bin/devhost-win.js"
   },
   "scripts": {
     "prepare": "run-s prepare:* && husky install",
