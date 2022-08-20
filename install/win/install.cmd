@@ -40,6 +40,6 @@ setlocal
   goto :nodeReady
 
 :nodeReady
-  call npm i --location=global @cpdevtools/development-host@latest
+  call npm i --location=global typescript ts-node @cpdevtools/development-host@latest
   call devhost install
 endlocal
