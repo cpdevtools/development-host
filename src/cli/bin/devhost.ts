@@ -8,23 +8,26 @@ import { exit } from "process";
 import { fileURLToPath } from "url";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
+import glob from "glob";
 
 (async () => {
   try {
+    let argv = yargs(hideBin(process.argv)).scriptName("devhost");
+
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
 
-    const jsFiles = path.join(__dirname, "..", "commands", os.platform() === "win32" ? "win" : "linux", "**/*.js");
-    const files = await fastGlob(jsFiles);
+    const cmdDir = path.join(__dirname, "..", "commands", os.platform() === "win32" ? "win" : "linux");
+    const jsFiles = "**/*.js";
 
-    let argv = yargs(hideBin(process.argv)).scriptName("devhost");
-
+    const files = glob.sync(jsFiles, { cwd: cmdDir });
     for (const file of files) {
-      const m = await import(file);
+      let mPath = "file://" + path.normalize(path.join(cmdDir, file));
+      const m = await import(mPath);
       if (m.default) {
         const toImport = Array.isArray(m.default) ? m.default : [m.default];
-        for (const i of toImport) {
-          argv = argv.command(i);
+        for (const imp of toImport) {
+          argv = argv.command(imp);
         }
       }
     }
