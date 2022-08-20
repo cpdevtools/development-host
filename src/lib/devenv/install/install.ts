@@ -2,14 +2,18 @@ import {
   exec,
   FileDownload,
   installWSL,
+  isApplicationRunning,
+  isDockerDesktopRunning,
   isWslDistroInstalled,
   isWslInstalled,
   killDockerDesktop,
   rebootWindows,
   removeRunOnceAfterRestart,
   runOnceAfterRestart,
+  startDockerDesktop,
   updateWSL,
 } from "@cpdevtools/lib-node-utilities";
+import chalk from "chalk";
 
 import { existsSync } from "fs";
 import { mkdir, readFile, writeFile } from "fs/promises";
@@ -22,7 +26,7 @@ import { exit } from "process";
 import sha256File from "sha256-file";
 import { promptConfig } from "../config";
 import { onStartup } from "../startup/startup";
-import { applicationFooter, subTaskFooter, subTaskHeader, taskFooter, taskHeader } from "../ui/headers";
+import { applicationFooter, applicationHeader, subTaskFooter, subTaskHeader, taskFooter, taskHeader } from "../ui/headers";
 import { installOrUpdateCore } from "./update";
 
 export const INSTALL_NAME = "DevelopmentContainerHost";
@@ -58,7 +62,43 @@ async function runTasks(tasks: Task[]) {
 export async function installOnWindows(resumeOn: number = 0) {
   const tasks: Task[] = [
     async () => {
+      const warnDD = await isDockerDesktopRunning();
+      const warnWsl = await isWslInstalled();
+      const warnVsCode = await isApplicationRunning("Code.exe");
+      const warnAny = warnDD || warnWsl || warnVsCode;
+
+      let msgs = [`Installing ${chalk.cyan(`Development Container Host`)}\n`];
+
+      if (warnDD) {
+        msgs.push(`${chalk.yellow(`Warning:`)} ${chalk.cyan(`WSL`)} will be restarted/updated during install.`);
+      }
+      if (warnWsl) {
+        msgs.push(`${chalk.yellow(`Warning:`)} ${chalk.cyan(`Docker Desktop`)} will be restarted/updated during install.`);
+      }
+      if (warnVsCode) {
+        msgs.push(`${chalk.yellow(`Warning:`)} ${chalk.cyan(`VS Code`)} will loose connections to docker, wsl & dev containers.`);
+      }
+      if (warnAny) {
+        msgs.push(`Make sure you won't loose any work.`);
+      }
+
+      applicationHeader(msgs.join("\n"), warnAny ? "warn" : "");
+
+      if (warnAny) {
+        const answers = await inquirer.prompt({
+          type: "confirm",
+          name: "continue",
+          message: "Continue?",
+          default: true,
+        });
+
+        if (answers.continue !== true) {
+          exit();
+        }
+      }
+
       await killDockerDesktop();
+
       if (!(await isWslInstalled())) {
         taskHeader(`Installing WSL...`);
         await installWSL();
@@ -83,6 +123,7 @@ export async function installOnWindows(resumeOn: number = 0) {
       taskHeader(`Installing ${INSTALL_NAME} cli`);
       await installCliOnLinux();
       taskFooter(`Installed ${INSTALL_NAME} cli`);
+      await startDockerDesktop();
     },
   ];
 
