@@ -1,3 +1,3 @@
 import { OnStartCommand } from "./OnStartCommand";
 
-module.exports = [OnStartCommand];
+export default [OnStartCommand];

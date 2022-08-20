@@ -1,3 +1,3 @@
 import { InstallCommand } from "./InstallCommand";
 
-module.exports = [InstallCommand];
+export default [InstallCommand];

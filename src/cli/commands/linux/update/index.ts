@@ -1,6 +1,8 @@
 import { exec } from "@cpdevtools/lib-node-utilities";
+import chalk from "chalk";
 import { exit } from "process";
 import { asapScheduler } from "rxjs";
+import { applicationHeader } from "../../../../lib/devenv/ui/headers";
 import { boolean, CommandModule } from "yargs";
 import { installOrUpdateCore, updateSelf } from "../../../../lib/devenv/install/update";
 
@@ -18,6 +20,7 @@ export const UpdateCommand: CommandModule<{}, UpdateCommandOptions> = {
     }),
   handler: async (args): Promise<void> => {
     if (!args.afterSelfUpdate) {
+      console.info(applicationHeader(`Development Container Host\n${chalk.grey("Updater")}`));
       await updateSelf();
       await exec(`devhost update --after-self-update`, { cwd: process.cwd() });
       exit();
@@ -27,4 +30,4 @@ export const UpdateCommand: CommandModule<{}, UpdateCommandOptions> = {
   },
 };
 
-module.exports = UpdateCommand;
+export default UpdateCommand;
