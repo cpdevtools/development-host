@@ -1,19 +1,17 @@
-#!/usr/bin/env node --experimental-specifier-resolution=node
+#!/usr/bin/env ts-node-esm --experimentalSpecifierResolution node
 
 import { sleep } from "@cpdevtools/lib-node-utilities";
-import fastGlob from "fast-glob";
+import glob from "glob";
 import os from "os";
 import path from "path";
 import { exit } from "process";
 import { fileURLToPath } from "url";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import glob from "glob";
 
 (async () => {
   try {
     let argv = yargs(hideBin(process.argv)).scriptName("devhost");
-
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
 
@@ -31,11 +29,10 @@ import glob from "glob";
         }
       }
     }
-
     argv.parse();
   } catch (e) {
     console.error(e);
-    await sleep(60 * 1000);
+    await sleep(5 * 1000);
     exit(1);
   }
 })();
