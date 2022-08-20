@@ -6,7 +6,7 @@
   "main": "index.js",
   "type": "module",
   "bin": {
-    "devhost": "cli/bin/devhost.js",
+    "devhost": "cli/bin/devhost-linux.js",
     "devhost-win": "cli/bin/devhost-win.js"
   },
   "scripts": {
