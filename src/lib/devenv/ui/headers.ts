@@ -1,35 +1,35 @@
 import boxen from "boxen";
 import chalk from "chalk";
 
-export function applicationHeader(text: string): string {
-  return (
+export function applicationHeader(text: string, color?: "" | "warn"): void {
+  console.info(
     "\n" +
-    boxen(text, {
-      padding: 1,
-      margin: 0,
-      borderStyle: "double",
-      borderColor: "green",
-      textAlignment: "center",
-      width: 80,
-      float: "left",
-    }) +
-    "\n"
+      boxen(text, {
+        padding: 1,
+        margin: 0,
+        borderStyle: "double",
+        borderColor: color === "warn" ? "yellow" : "greenBright",
+        textAlignment: "center",
+        width: 80,
+        float: "left",
+      }) +
+      "\n"
   );
 }
 
-export function applicationFooter(text: string): string {
-  return (
+export function applicationFooter(text: string): void {
+  console.info(
     "\n" +
-    boxen(text, {
-      padding: 1,
-      margin: 0,
-      borderStyle: "double",
-      borderColor: "green",
-      textAlignment: "center",
-      width: 80,
-      float: "left",
-    }) +
-    "\n"
+      boxen(text, {
+        padding: 1,
+        margin: 0,
+        borderStyle: "double",
+        borderColor: "greenBright",
+        textAlignment: "center",
+        width: 80,
+        float: "left",
+      }) +
+      "\n"
   );
 }
 
