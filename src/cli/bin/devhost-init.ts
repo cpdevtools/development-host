@@ -1,5 +1,3 @@
-#!/usr/bin/env ts-node --esm --experimentalSpecifierResolution node
-
 import { sleep } from "@cpdevtools/lib-node-utilities";
 import glob from "glob";
 import os from "os";

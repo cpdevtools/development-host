@@ -41,5 +41,5 @@ setlocal
 
 :nodeReady
   call npm install --location=global typescript ts-node @cpdevtools/development-host@latest
-  call npx -p @cpdevtools/development-host@latest -- devhost-win install
+  call devhost install
 endlocal
