@@ -1,4 +1,4 @@
-import { toFormattedYaml, ValidationError } from "@cpdevtools/lib-node-utilities";
+import { toFormattedYaml } from "@cpdevtools/lib-node-utilities";
 import chalk from "chalk";
 import { exit } from "process";
 import { ArgumentsCamelCase, Argv, CommandModule } from "yargs";
