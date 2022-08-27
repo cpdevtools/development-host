@@ -1,7 +1,6 @@
 import { GlobalInstallerService } from "@cpdevtools/lib-node-utilities";
-import path from "path";
 
-GlobalInstallerService.scanDir(path.join(__dirname, "../../_install_data_/installers"));
+GlobalInstallerService.scanDir(new URL("../../_install_data_/installers", import.meta.url).toString());
 
 export async function updateSelf() {
   await GlobalInstallerService.update((await import("../../_install_data_/lists/self-update.list.js")).default);

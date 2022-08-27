@@ -1,36 +1,16 @@
 #!/usr/bin/env node
 
-import { sleep } from "@cpdevtools/lib-node-utilities";
-import glob from "glob";
-import os from "os";
+import { exec } from "@cpdevtools/lib-node-utilities";
 import path from "path";
 import { exit } from "process";
-import yargs from "yargs";
-import { hideBin } from "yargs/helpers";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const initPath = path.join(__dirname, "devhost-init.js");
 
 (async () => {
-  try {
-    let argv = yargs(hideBin(process.argv)).scriptName("devhost");
-
-    const cmdDir = path.join(__dirname, "..", "commands", os.platform() === "win32" ? "win" : "linux");
-    const jsFiles = "**/*.js";
-
-    const files = glob.sync(jsFiles, { cwd: cmdDir });
-    for (const file of files) {
-      let mPath = path.normalize(path.join(cmdDir, file));
-
-      const m = require(mPath);
-      if (m.default) {
-        const toImport = Array.isArray(m.default) ? m.default : [m.default];
-        for (const imp of toImport) {
-          argv = argv.command(imp);
-        }
-      }
-    }
-    argv.parse();
-  } catch (e) {
-    console.error(e);
-    await sleep(5 * 1000);
-    exit(1);
-  }
+  const initCmd = `ts-node --esm "${initPath}" ${process.argv.slice(2).join(" ")}`;
+  const code = await exec(initCmd);
+  exit(code);
 })();
