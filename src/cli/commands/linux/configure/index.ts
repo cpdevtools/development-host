@@ -1,7 +1,8 @@
 import { toFormattedYaml } from "@cpdevtools/lib-node-utilities";
 import chalk from "chalk";
 import { exit } from "process";
-import { ArgumentsCamelCase, Argv, CommandModule } from "yargs";
+
+import { Argv, CommandModule } from "yargs";
 import {
   checkConfig,
   getConfigProperty,
@@ -10,7 +11,7 @@ import {
   setConfigProperties,
   setConfigProperty,
   USER_CONFIG_PATH,
-} from "../../../../lib/devenv/config";
+} from "../../../../lib/devenv/config/index.js";
 
 export interface GetConfigPropCommandArgs {
   property: string;
@@ -109,7 +110,7 @@ export const ConfigCommandGroup: CommandModule = {
   describe: "list the config",
   builder: (yargs: Argv) =>
     yargs.command(GetConfigPropCommand).command(SetConfigPropCommand).command(ConfigCommand).command(CheckConfigCommand),
-  handler: (args: ArgumentsCamelCase<{}>): void | Promise<void> => {},
+  handler: (args): void | Promise<void> => {},
 };
 
 export default ConfigCommandGroup;

@@ -1,6 +1,6 @@
 import { launchContainerUrl } from "@cpdevtools/lib-node-utilities";
 import { CommandModule } from "yargs";
-import { listContainers } from "../../../../lib/devenv/containers";
+import { listContainers } from "../../../../lib/devenv/containers/index.js";
 
 export const OpenContainerCommand: CommandModule<{}, OpenContainerCommandArgs> = {
   command: "open <containerId> [workspace]",
@@ -18,9 +18,9 @@ export const OpenContainerCommand: CommandModule<{}, OpenContainerCommandArgs> =
       }),
   handler: async (args): Promise<void> => {
     const containers = await listContainers();
-    const container = containers.find((c) => c.id === args.containerId);
+    const container = containers.find((c: any) => c.id === args.containerId);
     if (container) {
-      const workspace = container.workspaces.find((w) => w.name === args.workspace);
+      const workspace = container.workspaces.find((w: any) => w.name === args.workspace);
       const launchUrl = workspace?.launchUrl ?? container.launchUrl;
       if (launchUrl) {
         launchContainerUrl(launchUrl);

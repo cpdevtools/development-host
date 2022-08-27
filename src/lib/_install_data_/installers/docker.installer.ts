@@ -1,8 +1,6 @@
 import {
-  AfterInstall,
   AfterInstallOrUpdate,
   AptInstaller,
-  BeforeInstall,
   BeforeInstallOrUpdate,
   getDockerDesktopConfigPath,
   Installer,
@@ -14,7 +12,8 @@ import {
   WingetInstaller,
   writeJsonFile,
 } from "@cpdevtools/lib-node-utilities";
-import { INSTALL_NAME } from "../../devenv/install/install";
+import { INSTALL_NAME } from "../../devenv/install/install.js";
+
 const DockerInstaller: Installer = {
   id: "docker",
   name: "Docker",

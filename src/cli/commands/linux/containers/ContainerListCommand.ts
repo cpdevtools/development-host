@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { CommandModule } from "yargs";
-import { listContainers } from "../../../../lib/devenv/containers";
+import { listContainers } from "../../../../lib/devenv/containers/index.js";
 
 export const ContainerListCommand: CommandModule<{}, ContainerListCommandArgs> = {
   command: "ls",
@@ -20,7 +20,7 @@ export const ContainerListCommand: CommandModule<{}, ContainerListCommandArgs> =
   handler: async (args): Promise<void> => {
     const containers = await listContainers();
     console.group();
-    containers.forEach((c) => {
+    containers.forEach((c: any) => {
       console.info(`${chalk.yellow(args.long ? c.path : c.id)}`);
       if (args.workspaces) {
         for (const ws of c.workspaces) {
