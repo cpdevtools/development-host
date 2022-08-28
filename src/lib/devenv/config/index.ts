@@ -1,4 +1,13 @@
-import { printYamlFile, readYamlFile, ValidationError, ValidationResult, writeYamlFile } from "@cpdevtools/lib-node-utilities";
+import {
+  dockerLogin,
+  envVars,
+  printYamlFile,
+  readYamlFile,
+  setWindowsEnv,
+  ValidationError,
+  ValidationResult,
+  writeYamlFile,
+} from "@cpdevtools/lib-node-utilities";
 import { existsSync } from "fs";
 import fs from "fs/promises";
 import inquirer, { InputQuestion } from "inquirer";
@@ -6,6 +15,9 @@ import lodash from "lodash";
 
 import { homedir } from "os";
 import path from "path";
+
+import { createTokenAuth } from "@octokit/auth-token";
+import { Octokit } from "@octokit/rest";
 
 export const USER_DIRECTORY = path.join(homedir(), ".dch");
 export const USER_CONFIG_PATH = path.join(USER_DIRECTORY, "config.yml");
@@ -40,10 +52,25 @@ async function saveConfig(data: DevEnvironmentConfig) {
   await writeYamlFile(USER_CONFIG_PATH, data, 2);
 }
 
-export async function loadConfig(): Promise<DevEnvironmentConfig | undefined> {
+export async function loadConfig(): Promise<DevEnvironmentConfig> {
+  let cfg: any;
   if (configFileExists()) {
-    return await readYamlFile(USER_CONFIG_PATH);
+    cfg = await readYamlFile(USER_CONFIG_PATH);
   }
+
+  const config: DevEnvironmentConfig = {
+    author: {
+      name: cfg?.author?.name ?? "",
+      email: cfg?.author?.email ?? "",
+    },
+    containerRoot: cfg?.containerRoot ?? "",
+    github: {
+      token: cfg?.github?.token ?? "",
+      username: cfg?.github?.token ?? "",
+    },
+  };
+
+  return config;
 }
 
 export async function printConfig() {
@@ -96,9 +123,25 @@ function copyConfig(v?: DevEnvironmentConfig | null): DevEnvironmentConfig {
   };
 }
 
+async function githubLogin() {
+  const config = await loadConfig();
+  if (config.github.token) {
+    try {
+      const auth = createTokenAuth(config.github.token);
+      const { token } = await auth();
+      const octokit = new Octokit({ auth: token });
+      await octokit.users.getAuthenticated();
+      return octokit;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}
+
 export async function checkConfig(): Promise<ValidationResult> {
   return validateConfig(await loadConfig(), false);
 }
+
 function validateConfig(data: any, allowPartial: boolean = true): ValidationResult {
   const config = copyConfig(data);
   const result: ValidationResult = {
@@ -177,6 +220,35 @@ function validateConfig(data: any, allowPartial: boolean = true): ValidationResu
 
 export async function promptConfig(confirm: boolean = true) {
   const config = await loadConfig();
+  let octokit = await githubLogin();
+  while (!octokit) {
+    const q = {
+      name: "github.token",
+      type: "input",
+      askAnswered: confirm,
+      message: "Your github personal access token(PAT):",
+      default: config?.github.token ?? undefined,
+    };
+    const a = await inquirer.prompt([q], {
+      "github.token": config?.github.token ?? undefined,
+    });
+    if (!isEmpty(a["github.token"])) {
+      await setConfigProperty("github.token", a["github.token"]);
+      octokit = await githubLogin();
+    }
+  }
+
+  const user = await octokit.users.getAuthenticated();
+
+  config.author.name = user.data.name ?? config.author.name;
+  config.author.email = user.data.email ?? config.author.email;
+  config.github.username = user.data.login;
+
+  await setConfigProperties([
+    ["author.name", isEmpty(config.author.name) ? "" : config.author.name!],
+    ["author.email", isEmpty(config.author.email) ? "" : config.author.email!],
+    ["github.username", isEmpty(config.github.username) ? "" : config.github.username!],
+  ]);
 
   const questions: InputQuestion[] = [];
   if (confirm || isEmpty(config?.author.name)) {
@@ -199,37 +271,26 @@ export async function promptConfig(confirm: boolean = true) {
     });
   }
 
-  if (confirm || isEmpty(config?.github.username)) {
-    questions.push({
-      name: "github.username",
-      type: "input",
-      askAnswered: confirm,
-      message: "Your github username:",
-      default: config?.github.username ?? undefined,
-    });
-  }
-
-  if (confirm || isEmpty(config?.github.token)) {
-    questions.push({
-      name: "github.token",
-      type: "input",
-      askAnswered: confirm,
-      message: "Your github personal access token(PAT):",
-      default: config?.github.token ?? undefined,
-    });
-  }
-
   const answers = await inquirer.prompt(questions, {
     "author.name": config?.author.name ?? undefined,
     "author.email": config?.author.email ?? undefined,
-    "github.username": config?.github.username ?? undefined,
-    "github.token": config?.github.token ?? undefined,
   });
 
   await setConfigProperties([
     ["author.name", isEmpty(answers["author.name"]) ? null : answers["author.name"]],
     ["author.email", isEmpty(answers["author.email"]) ? null : answers["author.email"]],
-    ["github.username", isEmpty(answers["github.username"]) ? null : answers["github.username"]],
-    ["github.token", isEmpty(answers["github.token"]) ? null : answers["github.token"]],
   ]);
+
+  await applyConfig();
+}
+
+export async function applyConfig() {
+  const config = await loadConfig();
+
+  if (!config) {
+    throw Error("Config not found");
+  }
+
+  await envVars("GITHUB_TOKEN", config.github.token!);
+  await dockerLogin("ghcr.io", config.github.username!, config.github.token!);
 }

@@ -2,9 +2,9 @@ import { clone, getContainerLaunchUrl, readJsonFile } from "@cpdevtools/lib-node
 import glob from "fast-glob";
 import { readdir, rm, rmdir } from "fs/promises";
 import Path from "path/posix";
-import { DEFAULT_CONTAINER_ROOT, loadConfig } from "../config";
-import { DevContainer } from "./DevContainer";
-import { DevEnvironment } from "./DevEnvironment";
+import { DEFAULT_CONTAINER_ROOT, loadConfig } from "../config/index.js";
+import { DevContainer } from "./DevContainer.js";
+import { DevEnvironment } from "./DevEnvironment.js";
 
 async function loadEnvironmentData() {
   const config = await loadConfig();

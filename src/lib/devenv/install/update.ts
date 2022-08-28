@@ -1,14 +1,9 @@
-import { exec, GlobalInstallerService } from "@cpdevtools/lib-node-utilities";
-import path from "path";
-import { fileURLToPath } from "url";
+import { GlobalInstallerService } from "@cpdevtools/lib-node-utilities";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-GlobalInstallerService.scanDir(path.join(__dirname, "../../_install_data_/installers"));
+GlobalInstallerService.scanDir(new URL("../../_install_data_/installers", import.meta.url).toString());
 
 export async function updateSelf() {
-  await GlobalInstallerService.update((await import("../../_install_data_/lists/self-update.list")).default);
+  await GlobalInstallerService.update((await import("../../_install_data_/lists/self-update.list.js")).default);
 }
 
 export async function updateHost() {
@@ -20,9 +15,9 @@ export async function updateApplications() {
 }
 
 export async function updateCore(): Promise<void> {
-  await GlobalInstallerService.update((await import("../../_install_data_/lists/core-update.list")).default);
+  await GlobalInstallerService.update((await import("../../_install_data_/lists/core-update.list.js")).default);
 }
 
 export async function installOrUpdateCore(): Promise<void> {
-  await GlobalInstallerService.installOrUpdate((await import("../../_install_data_/lists/core-update.list")).default);
+  await GlobalInstallerService.installOrUpdate((await import("../../_install_data_/lists/core-update.list.js")).default);
 }

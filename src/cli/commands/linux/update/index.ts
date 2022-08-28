@@ -1,10 +1,9 @@
 import { exec } from "@cpdevtools/lib-node-utilities";
 import chalk from "chalk";
 import { exit } from "process";
-import { asapScheduler } from "rxjs";
-import { applicationHeader } from "../../../../lib/devenv/ui/headers";
-import { boolean, CommandModule } from "yargs";
-import { installOrUpdateCore, updateSelf } from "../../../../lib/devenv/install/update";
+import { CommandModule } from "yargs";
+import { installOrUpdateCore, updateSelf } from "../../../../lib/devenv/install/update.js";
+import { applicationHeader } from "../../../../lib/devenv/ui/headers.js";
 
 interface UpdateCommandOptions {
   afterSelfUpdate: boolean;
