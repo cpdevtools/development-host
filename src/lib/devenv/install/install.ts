@@ -173,7 +173,9 @@ async function setupUser() {
   }
 
   subTaskHeader(`Adding user ${username}`);
-  await exec(`wsl.exe -d ${INSTALL_NAME} --cd ~ bash -ic "adduser ${username} && usermod -aG sudo ${username}"`);
+  await exec(
+    `wsl.exe -d ${INSTALL_NAME} --cd ~ bash -ic "adduser ${username} && usermod -aG sudo ${username} && usermod -aG docker ${username}"`
+  );
 
   const confPath = `\\\\wsl.localhost\\${INSTALL_NAME}\\etc\\wsl.conf`;
   let conf: any = {
