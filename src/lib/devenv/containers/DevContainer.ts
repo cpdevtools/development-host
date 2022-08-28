@@ -1,4 +1,4 @@
-import { DevWorkspace } from "./DevWorkspace";
+import { DevWorkspace } from "./DevWorkspace.js";
 
 export interface DevContainer {
   id: string;

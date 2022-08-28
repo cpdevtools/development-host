@@ -1,6 +1,6 @@
 import { printAsYaml } from "@cpdevtools/lib-node-utilities";
 import { CommandModule } from "yargs";
-import { listContainers } from "../../../../lib/devenv/containers";
+import { listContainers } from "../../../../lib/devenv/containers/index.js";
 
 export const ContainerInspectCommand: CommandModule<{}, ContainerInspectCommandArgs> = {
   command: "inspect <container-id>",
@@ -14,7 +14,7 @@ export const ContainerInspectCommand: CommandModule<{}, ContainerInspectCommandA
     }),
   handler: async (args): Promise<void> => {
     const containers = await listContainers();
-    const container = containers.find((c) => c.id === args.containerId);
+    const container = containers.find((c: any) => c.id === args.containerId);
     if (container) {
       printAsYaml(
         {
@@ -22,7 +22,7 @@ export const ContainerInspectCommand: CommandModule<{}, ContainerInspectCommandA
             owner: container.owner,
             name: container.name,
             launchUrl: container.launchUrl,
-            workspaces: container.workspaces.map((ws) => ({
+            workspaces: container.workspaces.map((ws: any) => ({
               name: ws.name,
               path: ws.path.slice(container.path.length + 1),
               launchUrl: ws.launchUrl,

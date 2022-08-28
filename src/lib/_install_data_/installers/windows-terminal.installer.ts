@@ -1,6 +1,6 @@
 import { Installer, Platform, WingetInstaller } from "@cpdevtools/lib-node-utilities";
 
-const WindowsTerminalInstaller: Installer = {
+export const WindowsTerminalInstaller: Installer = {
   id: "Microsoft.WindowsTerminal",
   name: "Ubuntu 20.04",
   categories: ["host"],
@@ -12,5 +12,3 @@ const WindowsTerminalInstaller: Installer = {
     },
   },
 };
-
-export default WindowsTerminalInstaller;
