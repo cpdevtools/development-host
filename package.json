@@ -23,7 +23,6 @@
     "pack:mkdir": "mkdir -p ./dist/pack",
     "pack:pack": "cd ./dist && pnpm pack --pack-destination ./pack",
     "release": "run-s release:*",
-    "release:build": "pnpm run build",
     "release:publish": "pnpm publish ./dist --access public --publish-branch 'release/latest'",
     "npm:release": "run-s npm:release:*",
     "npm:release:publish": "pnpm publish ./dist --access public --publish-branch 'release/latest'",
