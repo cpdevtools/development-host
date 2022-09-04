@@ -1,73 +1,74 @@
 import {
+  createRepo,
   dockerLogin,
-  envVars,
+  gitClone,
+  gitIsRepo,
+  gitSync,
   printYamlFile,
   readYamlFile,
-  setWindowsEnv,
-  ValidationError,
-  ValidationResult,
+  setConfig,
   writeYamlFile,
 } from "@cpdevtools/lib-node-utilities";
+import select from "@inquirer/select";
 import { existsSync } from "fs";
-import fs from "fs/promises";
-import inquirer, { InputQuestion } from "inquirer";
+import fs, { mkdir, readdir } from "fs/promises";
+import inquirer from "inquirer";
 import lodash from "lodash";
 
 import { homedir } from "os";
-import path from "path";
+import path, { dirname } from "path";
 
 import { createTokenAuth } from "@octokit/auth-token";
+import { RequestError } from "@octokit/request-error";
 import { Octokit } from "@octokit/rest";
-
+import chalk from "chalk";
+import { applicationHeader, taskHeader } from "../ui/headers.js";
 export const USER_DIRECTORY = path.join(homedir(), ".dch");
-export const USER_CONFIG_PATH = path.join(USER_DIRECTORY, "config.yml");
+export const USER_CONFIG_DIRECTORY = path.join(USER_DIRECTORY, "config");
+export const USER_CONFIG_PATH = path.join(USER_CONFIG_DIRECTORY, "config.yml");
 export const DEFAULT_CONTAINER_ROOT = path.join(USER_DIRECTORY, "containers");
 
-export interface DevEnvironmentConfig {
+export interface DCHConfig {
   containerRoot: string | null;
-  author: DevEnvironmentAuthorConfig;
-  github: DevEnvironmentGithubConfig;
-}
-export interface DevEnvironmentAuthorConfig {
-  name: string | null;
-  email: string | null;
+  repo: string;
+  username: string;
+  token: string;
+  profile?: string;
 }
 
-export interface DevEnvironmentGithubConfig {
-  username: string | null;
-  token: string | null;
+export interface DCHProfileConfig {
+  name: string;
+  author?: DCHProfileAuthorConfig;
+}
+
+export interface DCHProfileAuthorConfig {
+  name?: string;
+  email?: string;
 }
 
 function configFileExists() {
   return existsSync(USER_CONFIG_PATH);
 }
 
-async function saveConfig(data: DevEnvironmentConfig) {
-  data = copyConfig(data);
-  const validation = validateConfig(data);
-  if (validation.failed) {
-    throw new ValidationError(validation.errors);
-  }
+async function saveConfig(data: DCHConfig) {
+  // data = copyConfig(data);
+  //const validation = validateConfig(data);
+  //if (validation.failed) {
+  // throw new ValidationError(validation.errors);
+  //}
   await fs.mkdir(path.dirname(USER_CONFIG_PATH), { recursive: true });
   await writeYamlFile(USER_CONFIG_PATH, data, 2);
 }
 
-export async function loadConfig(): Promise<DevEnvironmentConfig> {
-  let cfg: any;
-  if (configFileExists()) {
-    cfg = await readYamlFile(USER_CONFIG_PATH);
-  }
+export async function loadConfig(): Promise<DCHConfig> {
+  let cfg: Partial<DCHConfig> = configFileExists() ? await readYamlFile(USER_CONFIG_PATH) : {};
 
-  const config: DevEnvironmentConfig = {
-    author: {
-      name: cfg?.author?.name ?? "",
-      email: cfg?.author?.email ?? "",
-    },
+  const config: DCHConfig = {
     containerRoot: cfg?.containerRoot ?? "",
-    github: {
-      token: cfg?.github?.token ?? "",
-      username: cfg?.github?.token ?? "",
-    },
+    repo: cfg?.repo ?? "",
+    token: cfg?.token ?? "",
+    username: cfg?.username ?? "",
+    profile: cfg?.profile,
   };
 
   return config;
@@ -91,7 +92,7 @@ export async function setConfigProperty(property: string, value: any): Promise<v
 }
 
 export async function setConfigProperties(pairs: [string, string][]): Promise<void> {
-  const config = ((await loadConfig()) ?? {}) as DevEnvironmentConfig;
+  const config = ((await loadConfig()) ?? {}) as DCHConfig;
   for (let [key, val] of pairs) {
     if (val === "undefined") {
       lodash.unset(config, key);
@@ -109,35 +110,97 @@ function isEmpty(v: any) {
   return v === null || v === undefined || (typeof v === "string" && v.trim() === "");
 }
 
-function copyConfig(v?: DevEnvironmentConfig | null): DevEnvironmentConfig {
+function copyConfig(v?: DCHConfig | null): DCHConfig {
   return {
     containerRoot: v?.containerRoot || DEFAULT_CONTAINER_ROOT,
-    author: {
-      name: v?.author?.name ?? null,
-      email: v?.author?.email ?? null,
-    },
-    github: {
-      username: v?.github?.username ?? null,
-      token: v?.github?.token ?? null,
-    },
+    repo: v?.repo || "",
+    token: v?.repo || "",
+    username: v?.repo || "",
+    profile: v?.profile,
   };
 }
 
-async function githubLogin() {
-  const config = await loadConfig();
-  if (config.github.token) {
+async function githubLogin(withToken?: string) {
+  withToken ??= (await loadConfig()).token;
+  if (withToken) {
     try {
-      const auth = createTokenAuth(config.github.token);
+      const auth = createTokenAuth(withToken);
       const { token } = await auth();
       const octokit = new Octokit({ auth: token });
       await octokit.users.getAuthenticated();
       return octokit;
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      if (e.status !== 401) {
+        throw e;
+      }
     }
   }
 }
 
+async function getProfileRepoPath(): Promise<string> {
+  const config = await loadConfig();
+  return path.join(USER_CONFIG_DIRECTORY, `${config.username}/cpdevtools-dch-settings`);
+}
+
+async function getProfilesPath(): Promise<string> {
+  return path.join(await getProfileRepoPath(), `profiles`);
+}
+
+async function getProfilePath(name: string): Promise<string> {
+  return path.join(await getProfilesPath(), name);
+}
+
+async function getProfileConfigFile(name: string): Promise<string> {
+  return path.join(await getProfilePath(name), "profile.yml");
+}
+
+async function loadProfileConfig(name?: string) {
+  name ??= (await loadConfig()).profile;
+  if (!name) {
+    throw new Error("Cannot load profile. No name provided and no default is set.");
+  }
+
+  let cfg: Partial<DCHProfileConfig> = {};
+
+  if (await profileConfigFileExists(name)) {
+    cfg = await readYamlFile(await getProfileConfigFile(name));
+  }
+
+  const config: DCHProfileConfig = {
+    ...cfg,
+    name: cfg.name ?? name,
+    author: {
+      name: cfg.author?.name ?? "",
+      email: cfg.author?.email ?? "",
+    },
+  };
+  return config;
+}
+
+async function saveProfile(data: DCHProfileConfig) {
+  const config = await loadConfig();
+  const name = data.name;
+  if (!name) {
+    throw new Error("Cannot save profile. No name provided and no default is set.");
+  }
+
+  const profileFile = await getProfileConfigFile(name);
+  await fs.mkdir(dirname(profileFile), { recursive: true });
+  await writeYamlFile(profileFile, data);
+
+  await setConfig("user.name", data.author?.name ?? "");
+  await setConfig("user.email", data.author?.email ?? "");
+
+  const repoDir = path.join(USER_CONFIG_DIRECTORY, `${config.username}/cpdevtools-dch-settings`);
+  await gitSync(repoDir);
+}
+
+async function profileConfigFileExists(name: string) {
+  const profileFile = await getProfileConfigFile(name);
+  return existsSync(profileFile);
+}
+
+/*
 export async function checkConfig(): Promise<ValidationResult> {
   return validateConfig(await loadConfig(), false);
 }
@@ -217,80 +280,186 @@ function validateConfig(data: any, allowPartial: boolean = true): ValidationResu
 
   return result;
 }
+*/
 
-export async function promptConfig(confirm: boolean = true) {
+export async function promptPAT(confirm: boolean = true) {
   const config = await loadConfig();
   let octokit = await githubLogin();
-  while (!octokit) {
-    const q = {
-      name: "github.token",
+  let configToken: string = config.token;
+
+  if (!octokit) {
+    const { token } = await inquirer.prompt({
+      name: "token",
       type: "input",
       askAnswered: confirm,
       message: "Your github personal access token(PAT):",
-      default: config?.github.token ?? undefined,
-    };
-    const a = await inquirer.prompt([q], {
-      "github.token": config?.github.token ?? undefined,
+      default: configToken ?? undefined,
+      validate: async (v) => !!(await githubLogin(v)),
     });
-    if (!isEmpty(a["github.token"])) {
-      await setConfigProperty("github.token", a["github.token"]);
-      octokit = await githubLogin();
-    }
+    configToken = token;
+    await setConfigProperty("token", token);
   }
 
-  const user = await octokit.users.getAuthenticated();
-
-  config.author.name = user.data.name ?? config.author.name;
-  config.author.email = user.data.email ?? config.author.email;
-  config.github.username = user.data.login;
-
-  await setConfigProperties([
-    ["author.name", isEmpty(config.author.name) ? "" : config.author.name!],
-    ["author.email", isEmpty(config.author.email) ? "" : config.author.email!],
-    ["github.username", isEmpty(config.github.username) ? "" : config.github.username!],
-  ]);
-
-  const questions: InputQuestion[] = [];
-  if (confirm || isEmpty(config?.author.name)) {
-    questions.push({
-      name: "author.name",
-      type: "input",
-      askAnswered: confirm,
-      message: "Your full name:",
-      default: config?.author.name ?? undefined,
-    });
-  }
-
-  if (confirm || isEmpty(config?.author.email)) {
-    questions.push({
-      name: "author.email",
-      type: "input",
-      askAnswered: confirm,
-      message: "Your email address:",
-      default: config?.author.email ?? undefined,
-    });
-  }
-
-  const answers = await inquirer.prompt(questions, {
-    "author.name": config?.author.name ?? undefined,
-    "author.email": config?.author.email ?? undefined,
-  });
-
-  await setConfigProperties([
-    ["author.name", isEmpty(answers["author.name"]) ? null : answers["author.name"]],
-    ["author.email", isEmpty(answers["author.email"]) ? null : answers["author.email"]],
-  ]);
-
-  await applyConfig();
+  return configToken;
 }
 
-export async function applyConfig() {
+export async function promptConfig(confirm: boolean = true) {
+  const config = await loadConfig();
+  applicationHeader(`Development Container Host\n${chalk.gray("Configuration")}`);
+
+  const token = await promptPAT(confirm);
+  let octokit = await githubLogin();
+  if (octokit) {
+    const user = await octokit.users.getAuthenticated();
+    await setupUserProfilesRepo(user.data.login, token, octokit);
+    await setupProfile();
+  }
+}
+
+async function setupProfile(name?: string) {
+  const profile = await loadProfileConfig(name);
+  profile.author ??= {};
+
+  taskHeader(`Setup profile ${chalk.cyan(profile.name)}`);
+
+  const answers = await inquirer.prompt([
+    {
+      type: "input",
+      name: "name",
+      message: "Your full name?",
+      validate: (v) => !!v?.length,
+      default: profile.author.name,
+    },
+    {
+      type: "input",
+      name: "email",
+      message: "Your public email address?",
+      validate: (v) => !!v?.length,
+      default: profile.author.email,
+    },
+  ]);
+
+  profile.author.name = answers.name;
+  profile.author.email = answers.email;
+
+  await saveProfile(profile);
+  await applyConfigs(name);
+}
+
+async function applyConfigs(profileName?: string) {
+  const config = await loadConfig();
+  const profile = await loadProfileConfig(profileName);
+
+  const gh = await githubLogin();
+  if (gh) {
+    await setConfig("user.name", profile.author?.name ?? "");
+    await setConfig("user.email", profile.author?.email ?? "");
+    await dockerLogin("ghcr.io", config.username, config.token);
+    await dockerLogin("docker.pkg.github.com", config.username, config.token);
+  }
+}
+
+async function setupUserProfilesRepo(username: string, token: string, octokit: Octokit) {
+  const repo = `${username}/cpdevtools-dch-settings`;
+  const repoDir = path.join(USER_CONFIG_DIRECTORY, `${username}/cpdevtools-dch-settings`);
+  const currentUserDir = path.join(USER_CONFIG_DIRECTORY, username);
+  await mkdir(currentUserDir, { recursive: true });
+
+  try {
+    await octokit.repos.get({
+      owner: username,
+      repo: "cpdevtools-dch-settings",
+    });
+    if (!(await gitIsRepo(repoDir))) {
+      await gitClone(currentUserDir, `https://github.com/${repo}`);
+    } else {
+      await gitSync(repoDir);
+    }
+  } catch (e) {
+    if (e instanceof RequestError) {
+      const q = {
+        name: "create",
+        type: "confirm",
+        message: `Allow creation of settings repository at 'github.com/${repo}'?`,
+        default: true,
+      };
+
+      const a = await inquirer.prompt([q]);
+      if (a.create) {
+        await createRepo(repo, {
+          description: "Setting for CP DevTools Development Container",
+          private: true,
+          clone: true,
+          cwd: currentUserDir,
+        });
+      }
+    }
+  }
+  await initializeProfileConfig(repo, username, token);
+}
+
+async function initializeProfileConfig(repo: string, username: string, token: string) {
+  await setConfigProperties([
+    ["repo", repo],
+    ["username", username],
+    ["token", token],
+  ]);
+
   const config = await loadConfig();
 
-  if (!config) {
-    throw Error("Config not found");
-  }
+  const userConfigDir = path.join(USER_CONFIG_DIRECTORY, username, "cpdevtools-dch-settings");
+  const profilesDir = path.join(userConfigDir, "profiles");
+  await mkdir(profilesDir, { recursive: true });
 
-  await envVars("GITHUB_TOKEN", config.github.token!);
-  await dockerLogin("ghcr.io", config.github.username!, config.github.token!);
+  let selectedProfile = config.profile;
+
+  if (!selectedProfile) {
+    const profileDirs = await readdir(profilesDir);
+    const profileDirsLower = profileDirs.map((d) => d.toLocaleLowerCase());
+
+    selectedProfile = await select({
+      message: "Choose or create a profile for this computer",
+      choices: [
+        {
+          name: "- New Profile -",
+          value: "-new-",
+          description: "Create a new profile.",
+        },
+        ...profileDirs.map((name) => ({
+          name,
+          value: name,
+          description: `Use profile '${name}'.`,
+        })),
+      ],
+    });
+
+    if (selectedProfile === "-new-") {
+      config.profile = await createNewProfile(username, profileDirsLower);
+      selectedProfile = config.profile!;
+    }
+
+    await setConfigProperties([["profile", selectedProfile]]);
+  }
+}
+
+async function createNewProfile(username: string, profiles: string[]) {
+  const alphaNumericCheck = /^[a-z0-9_-]+$/;
+  let profileName: string = "";
+  while (!profileName) {
+    const answers = await inquirer.prompt({
+      type: "input",
+      name: "profileName",
+      message: "What is the name of the new profile?",
+      validate: (v: string) => v.length > 2 && alphaNumericCheck.test(v) && !profiles.includes(v.toLowerCase()),
+    });
+    profileName = answers.profileName;
+  }
+  const userConfigDir = path.join(USER_CONFIG_DIRECTORY, username, "cpdevtools-dch-settings");
+
+  await saveProfile({
+    name: profileName,
+  });
+  await gitSync(userConfigDir);
+
+  return profileName;
 }
