@@ -1,4 +1,4 @@
-import { clone, getContainerLaunchUrl, readJsonFile } from "@cpdevtools/lib-node-utilities";
+import { cloneRepo, getContainerLaunchUrl, readJsonFile } from "@cpdevtools/lib-node-utilities";
 import glob from "fast-glob";
 import { readdir, rm, rmdir } from "fs/promises";
 import Path from "path/posix";
@@ -82,7 +82,7 @@ export async function cloneContainer(containerIdOrUrl: string) {
   const env = await loadEnvironmentData();
   let container = env.containers.find((c) => c.id === containerId);
   if (!container) {
-    await clone(containerId, containerId, config?.containerRoot!);
+    await cloneRepo(containerId, containerId, { cwd: config?.containerRoot ?? undefined });
   }
   return container;
 }

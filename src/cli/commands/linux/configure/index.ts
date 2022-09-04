@@ -4,7 +4,7 @@ import { exit } from "process";
 
 import { Argv, CommandModule } from "yargs";
 import {
-  checkConfig,
+  // checkConfig,
   getConfigProperty,
   printConfig,
   promptConfig,
@@ -53,11 +53,11 @@ export const CheckConfigCommand: CommandModule<{}, CheckConfigCommandArgs> = {
     }) as Argv<CheckConfigCommandArgs>,
   handler: async (args): Promise<void> => {
     if (!args.interactive) {
-      const result = await checkConfig();
+      /*const result = await checkConfig();
       if (result.failed) {
         result.errors.forEach((f) => console.error(chalk.red(`Error: ${f.message}`)));
         exit(1);
-      }
+      }*/
     } else {
       await promptConfig();
     }

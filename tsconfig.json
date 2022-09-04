@@ -21,7 +21,7 @@
     "strict": true,
     "traceResolution": false,
     "typeRoots": ["node_modules/@types", "src/types"],
-    "lib": ["esnext"],
+    "lib": ["esnext", "ES2022"],
     "types": ["node"]
   },
   "include": ["src"],
