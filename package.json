@@ -21,7 +21,7 @@
     "pack": "run-s pack:*",
     "pack:build": "pnpm run build",
     "pack:mkdir": "mkdir -p ./dist/pack",
-    "pack:pack": "cd ./dist && pnpm pack --pack-destination ../pack",
+    "pack:pack": "cd ./dist && pnpm pack --pack-destination ./pack",
     "release": "run-s release:*",
     "release:build": "pnpm run build",
     "release:publish": "pnpm publish ./dist --access public --publish-branch 'release/latest'",
