@@ -12,7 +12,7 @@ import {
   WingetInstaller,
   writeJsonFile,
 } from "@cpdevtools/lib-node-utilities";
-import { INSTALL_NAME } from "../../devenv/install/install.js";
+import { INSTALL_NAME } from "../../devenv/install/install";
 
 const DockerInstaller: Installer = {
   id: "docker",

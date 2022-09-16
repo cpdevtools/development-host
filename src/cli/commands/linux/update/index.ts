@@ -2,8 +2,8 @@ import { exec } from "@cpdevtools/lib-node-utilities";
 import chalk from "chalk";
 import { exit } from "process";
 import { CommandModule } from "yargs";
-import { installOrUpdateCore, updateSelf } from "../../../../lib/devenv/install/update.js";
-import { applicationHeader } from "../../../../lib/devenv/ui/headers.js";
+import { installOrUpdateCore, updateSelf } from "../../../../lib/devenv/install/update";
+import { applicationHeader } from "../../../../lib/devenv/ui/headers";
 
 interface UpdateCommandOptions {
   afterSelfUpdate: boolean;

@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
 import { CommandModule } from "yargs";
-import { removeContainer } from "../../../../lib/devenv/containers/index.js";
+import { removeContainer } from "../../../../lib/devenv/containers";
 export const RemoveContainerCommand: CommandModule<{}, RemoveContainerCommandArgs> = {
   command: "remove <container-id>",
   describe: "Remove a container",

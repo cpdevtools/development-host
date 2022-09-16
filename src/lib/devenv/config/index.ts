@@ -9,7 +9,7 @@ import {
   setConfig,
   writeYamlFile,
 } from "@cpdevtools/lib-node-utilities";
-import select from "@inquirer/select";
+
 import { existsSync } from "fs";
 import fs, { mkdir, readdir } from "fs/promises";
 import inquirer from "inquirer";
@@ -22,7 +22,7 @@ import { createTokenAuth } from "@octokit/auth-token";
 import { RequestError } from "@octokit/request-error";
 import { Octokit } from "@octokit/rest";
 import chalk from "chalk";
-import { applicationHeader, taskHeader } from "../ui/headers.js";
+import { applicationHeader, taskHeader } from "../ui/headers";
 export const USER_DIRECTORY = path.join(homedir(), ".dch");
 export const USER_CONFIG_DIRECTORY = path.join(USER_DIRECTORY, "config");
 export const USER_CONFIG_PATH = path.join(USER_CONFIG_DIRECTORY, "config.yml");
@@ -416,6 +416,8 @@ async function initializeProfileConfig(repo: string, username: string, token: st
   if (!selectedProfile) {
     const profileDirs = await readdir(profilesDir);
     const profileDirsLower = profileDirs.map((d) => d.toLocaleLowerCase());
+
+    const select = (await import("@inquirer/select/dist/index.js")).default;
 
     selectedProfile = await select({
       message: "Choose or create a profile for this computer",

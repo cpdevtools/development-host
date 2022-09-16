@@ -10,7 +10,6 @@ export function applicationHeader(text: string, color?: "" | "warn"): void {
         borderStyle: "double",
         borderColor: color === "warn" ? "yellow" : "greenBright",
         textAlignment: "center",
-        width: 80,
         float: "left",
       }) +
       "\n"
@@ -26,7 +25,6 @@ export function applicationFooter(text: string): void {
         borderStyle: "double",
         borderColor: "greenBright",
         textAlignment: "center",
-        width: 80,
         float: "left",
       }) +
       "\n"
@@ -42,7 +40,6 @@ export function taskHeader(text: string): void {
         borderStyle: "single",
         borderColor: "blueBright",
         textAlignment: "center",
-        width: 80,
         float: "left",
       })
   );
@@ -57,7 +54,6 @@ export function taskFooter(text: string): void {
         borderStyle: "single",
         borderColor: "blue",
         textAlignment: "center",
-        width: 80,
         float: "left",
       })
   );
@@ -72,7 +68,6 @@ export function subTaskHeader(text: string): void {
         borderStyle: "single",
         borderColor: "yellow",
         textAlignment: "center",
-        width: 80,
         float: "left",
       })
   );
@@ -87,7 +82,6 @@ export function subTaskFooter(text: string): void {
         borderStyle: "single",
         borderColor: "yellow",
         textAlignment: "center",
-        width: 80,
         float: "left",
       })
   );

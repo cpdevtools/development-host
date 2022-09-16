@@ -24,10 +24,10 @@ import path from "path";
 import { exit } from "process";
 
 import sha256File from "sha256-file";
-import { promptConfig } from "../config/index.js";
-import { onStartup } from "../startup/startup.js";
-import { applicationFooter, applicationHeader, subTaskFooter, subTaskHeader, taskFooter, taskHeader } from "../ui/headers.js";
-import { installOrUpdateCore } from "./update.js";
+import { promptConfig } from "../config";
+import { onStartup } from "../startup/startup";
+import { applicationFooter, applicationHeader, subTaskFooter, subTaskHeader, taskFooter, taskHeader } from "../ui/headers";
+import { installOrUpdateCore } from "./update";
 
 export const INSTALL_NAME = "DevelopmentContainerHost";
 const INSTALL_TEMP_DIR = ".temp";

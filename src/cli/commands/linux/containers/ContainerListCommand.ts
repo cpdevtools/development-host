@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { CommandModule } from "yargs";
-import { listContainers } from "../../../../lib/devenv/containers/index.js";
+import { listContainers } from "../../../../lib/devenv/containers";
 
 export const ContainerListCommand: CommandModule<{}, ContainerListCommandArgs> = {
   command: "ls",

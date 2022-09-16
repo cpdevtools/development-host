@@ -1,3 +1,3 @@
-import { InstallCommand } from "./InstallCommand.js";
+import { InstallCommand } from "./InstallCommand";
 
 export default [InstallCommand];
