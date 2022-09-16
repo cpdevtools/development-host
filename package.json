@@ -1,6 +1,6 @@
 {
   "name": "@cpdevtools/development-host",
-  "version": "0.4.47",
+  "version": "0.4.48",
   "repository": "https://github.com/cpdevtools/development-host",
   "type": "module",
   "typings": "./index.d.ts",

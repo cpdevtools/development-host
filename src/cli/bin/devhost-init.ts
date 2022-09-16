@@ -28,14 +28,20 @@ import { hideBin } from "yargs/helpers";
     for (const file of files) {
       const modulePath = new URL(file, import.meta.url).toString();
       console.log("modulePath", modulePath);
+
       const module = await import(modulePath);
+      console.log("module", module);
+
       if (module.default) {
         const toImport = Array.isArray(module.default) ? module.default : [module.default];
+        console.log("toImport", toImport);
         for (const imp of toImport) {
+          console.log("imp", imp);
           argv = argv.command(imp);
         }
       }
     }
+    console.log("parse");
     argv.parse();
   } catch (e) {
     console.error(e);
