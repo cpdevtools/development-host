@@ -16,7 +16,7 @@ import { hideBin } from "yargs/helpers";
 
     const files = glob.sync(jsFiles, { cwd: __dirname });
 
-    console.log("found cmd files", files, jsFiles);
+    console.log("found cmd files", files, path.join(__dirname, jsFiles));
 
     for (const file of files) {
       const modulePath = new URL(file, import.meta.url).toString();
