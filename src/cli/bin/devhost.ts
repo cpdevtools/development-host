@@ -10,6 +10,7 @@ const __dirname = path.dirname(__filename);
 const initPath = path.join(__dirname, "devhost-init.js");
 
 (async () => {
+  console.log("starting dch cli...");
   const initCmd = `ts-node --esm "${initPath}" ${process.argv.slice(2).join(" ")}`;
   const code = await exec(initCmd);
   exit(code);
