@@ -2,9 +2,8 @@
   "name": "@cpdevtools/development-host",
   "version": "0.4.50",
   "repository": "https://github.com/cpdevtools/development-host",
-  "type": "module",
   "typings": "./index.d.ts",
-  "exports": "./index.js",
+  "main": "./index.js",
   "bin": {
     "devhost": "cli/bin/devhost.js"
   },
