@@ -1,6 +1,7 @@
 //import { sleep } from "@cpdevtools/lib-node-utilities";
 import { readdirSync } from "fs";
 import glob from "glob";
+import fglob from "fast-glob";
 import os from "os";
 import path from "path";
 import { exit } from "process";
@@ -16,8 +17,11 @@ import { hideBin } from "yargs/helpers";
     const jsFiles = path.join("..", "commands", os.platform() === "win32" ? "win" : "linux", "**/*.js");
 
     const files = glob.sync(jsFiles, { cwd: __dirname });
-
     console.log("found cmd files", files, path.join(__dirname, jsFiles));
+
+    const files2 = await fglob(jsFiles, { cwd: __dirname });
+    console.log("fast glob", files2);
+
     console.log(readdirSync(__dirname));
     console.log(readdirSync(path.join(__dirname, "..")));
     console.log(readdirSync(path.join(__dirname, "..", "commands")));

@@ -1,6 +1,6 @@
 {
   "name": "@cpdevtools/development-host",
-  "version": "0.4.45",
+  "version": "0.4.46",
   "repository": "https://github.com/cpdevtools/development-host",
   "type": "module",
   "typings": "./index.d.ts",
@@ -57,7 +57,7 @@
     "*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
-    "@cpdevtools/lib-node-utilities": "^0.4.18",
+    "@cpdevtools/lib-node-utilities": "^0.4.20",
     "@inquirer/select": "0.0.26-alpha.0",
     "@octokit/auth-token": "^3.0.1",
     "@octokit/request-error": "^3.0.1",
@@ -67,7 +67,7 @@
     "boxen": "^7.0.0",
     "chalk": "4.1.2",
     "cli-progress": "^3.11.2",
-    "fast-glob": "^3.2.11",
+    "fast-glob": "^3.2.12",
     "glob": "^8.0.3",
     "ini": "^3.0.0",
     "inquirer": "^8.2.4",
