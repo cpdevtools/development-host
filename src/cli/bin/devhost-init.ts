@@ -42,7 +42,7 @@ import { hideBin } from "yargs/helpers";
       }
     }
     console.log("parse");
-    argv.parse();
+    await argv.parse();
   } catch (e) {
     console.error(e);
     exit(1);
