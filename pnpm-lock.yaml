@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  "@cpdevtools/lib-node-utilities": ^0.4.18
+  "@cpdevtools/lib-node-utilities": ^0.4.20
   "@inquirer/select": 0.0.26-alpha.0
   "@octokit/auth-token": ^3.0.1
   "@octokit/request-error": ^3.0.1
@@ -19,7 +19,7 @@ specifiers:
   boxen: ^7.0.0
   chalk: 4.1.2
   cli-progress: ^3.11.2
-  fast-glob: ^3.2.11
+  fast-glob: ^3.2.12
   glob: ^8.0.3
   husky: ^8.0.0
   ini: ^3.0.0
@@ -42,7 +42,7 @@ specifiers:
   yargs: ^17.5.1
 
 dependencies:
-  "@cpdevtools/lib-node-utilities": 0.4.18
+  "@cpdevtools/lib-node-utilities": 0.4.20
   "@inquirer/select": 0.0.26-alpha.0
   "@octokit/auth-token": 3.0.1
   "@octokit/request-error": 3.0.1
@@ -52,7 +52,7 @@ dependencies:
   boxen: 7.0.0
   chalk: 4.1.2
   cli-progress: 3.11.2
-  fast-glob: 3.2.11
+  fast-glob: 3.2.12
   glob: 8.0.3
   ini: 3.0.1
   inquirer: 8.2.4
@@ -106,8 +106,8 @@ packages:
       js-tokens: 4.0.0
     dev: true
 
-  /@cpdevtools/lib-node-utilities/0.4.18:
-    resolution: { integrity: sha512-ZCBuXRBZg42uqNi5oL6Vn2JpKeiiwr/d/PWIUdswvtbOx9mHJcdViElylMPsVB+bXEey44LK597yCAuxJg0Msg== }
+  /@cpdevtools/lib-node-utilities/0.4.20:
+    resolution: { integrity: sha512-sN9W7oEPlnxCG+v8PiRYt2ixoNC+6O1GX8vlypVM0PzIVTfNPHs+5l6DFDvY/P2tpZsRaxZwqGTJBPlJH44IzQ== }
     engines: { node: ">=14.16" }
     dependencies:
       "@octokit/rest": 19.0.4
@@ -118,7 +118,7 @@ packages:
       cli-progress: 3.11.2
       date-fns: 2.29.2
       dependency-graph: 0.11.0
-      fast-glob: 3.2.11
+      fast-glob: 3.2.12
       inquirer: 8.2.4
       is-docker: 2.2.1
       is-wsl: 2.2.0
@@ -868,8 +868,8 @@ packages:
       tmp: 0.0.33
     dev: false
 
-  /fast-glob/3.2.11:
-    resolution: { integrity: sha512-xrO3+1bxSo3ZVHAnqzyuewYT6aMFHRAd4Kcs92MAonjwQZLsK9d0SF1IyQ3k5PoirxTW0Oe/RqFgMQ6TcNE5Ew== }
+  /fast-glob/3.2.12:
+    resolution: { integrity: sha512-DVj4CQIYYow0BlaelwK1pHl5n5cRSJfM60UA0zK891sVInoPri2Ekj7+e1CT3/3qxXenpI+nBBmQAcJPJgaj4w== }
     engines: { node: ">=8.6.0" }
     dependencies:
       "@nodelib/fs.stat": 2.0.5
