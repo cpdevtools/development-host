@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  "@cpdevtools/lib-node-utilities": ^0.4.16
+  "@cpdevtools/lib-node-utilities": ^0.4.20
   "@inquirer/select": 0.0.26-alpha.0
   "@octokit/auth-token": ^3.0.1
   "@octokit/request-error": ^3.0.1
@@ -118,7 +118,7 @@ packages:
       cli-progress: 3.11.2
       date-fns: 2.29.2
       dependency-graph: 0.11.0
-      fast-glob: 3.2.11
+      fast-glob: 3.2.12
       inquirer: 8.2.4
       is-docker: 2.2.1
       is-wsl: 2.2.0
@@ -866,17 +866,6 @@ packages:
       chardet: 0.7.0
       iconv-lite: 0.4.24
       tmp: 0.0.33
-    dev: false
-
-  /fast-glob/3.2.11:
-    resolution: { integrity: sha512-xrO3+1bxSo3ZVHAnqzyuewYT6aMFHRAd4Kcs92MAonjwQZLsK9d0SF1IyQ3k5PoirxTW0Oe/RqFgMQ6TcNE5Ew== }
-    engines: { node: ">=8.6.0" }
-    dependencies:
-      "@nodelib/fs.stat": 2.0.5
-      "@nodelib/fs.walk": 1.2.8
-      glob-parent: 5.1.2
-      merge2: 1.4.1
-      micromatch: 4.0.5
     dev: false
 
   /fast-glob/3.2.12:
