@@ -1,4 +1,5 @@
 //import { sleep } from "@cpdevtools/lib-node-utilities";
+import { readdirSync } from "fs";
 import glob from "glob";
 import os from "os";
 import path from "path";
@@ -17,6 +18,11 @@ import { hideBin } from "yargs/helpers";
     const files = glob.sync(jsFiles, { cwd: __dirname });
 
     console.log("found cmd files", files, path.join(__dirname, jsFiles));
+    console.log(readdirSync(__dirname));
+    console.log(readdirSync(path.join(__dirname, "..")));
+    console.log(readdirSync(path.join(__dirname, "..", "commands")));
+    console.log(readdirSync(path.join(__dirname, "..", "commands", "win")));
+    console.log(readdirSync(path.join(__dirname, "..", "commands", "win", "install")));
 
     for (const file of files) {
       const modulePath = new URL(file, import.meta.url).toString();
