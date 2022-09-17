@@ -1,14 +1,17 @@
 import { CommandModule } from "yargs";
 import { installOnWindows } from "../../../../lib/devenv/install/install";
 
-console.log("win install");
-
 export const PostInstallCommand: CommandModule = {
   command: "install",
   describe: false,
   builder: (yargs) => yargs,
   handler: async (args): Promise<void> => {
-    await installOnWindows();
+    try {
+      await installOnWindows();
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
   },
 };
 
