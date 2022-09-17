@@ -1,6 +1,6 @@
 import { launchContainerUrl } from "@cpdevtools/lib-node-utilities";
 import { CommandModule } from "yargs";
-import { listContainers } from "../../../../lib/devenv/containers/index.js";
+import { listContainers } from "../../../../lib/devenv/containers";
 
 export const OpenContainerCommand: CommandModule<{}, OpenContainerCommandArgs> = {
   command: "open <containerId> [workspace]",

@@ -1,5 +1,5 @@
 import { CommandModule } from "yargs";
-import { cloneContainer } from "../../../../lib/devenv/containers/index.js";
+import { cloneContainer } from "../../../../lib/devenv/containers";
 
 export const CloneContainerCommand: CommandModule<{}, CloneContainerCommandArgs> = {
   command: "clone <id | url>",

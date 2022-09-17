@@ -114,3 +114,4 @@ export const ConfigCommandGroup: CommandModule = {
 };
 
 export default ConfigCommandGroup;
+module.exports = ConfigCommandGroup;

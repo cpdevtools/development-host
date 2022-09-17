@@ -1,11 +1,11 @@
 import { CommandModule } from "yargs";
-import { CloneContainerCommand } from "./CloneContainerCommand.js";
-import { ContainerInspectCommand } from "./ContainerInspectCommand.js";
-import { ContainerListCommand } from "./ContainerListCommand.js";
-import { ContainerMenuCommand } from "./ContainerMenuCommand.js";
-import { CreateContainerCommand } from "./CreateContainerCommand.js";
-import { OpenContainerCommand } from "./OpenContainerCommand.js";
-import { RemoveContainerCommand } from "./RemoveContainerCommand.js";
+import { CloneContainerCommand } from "./CloneContainerCommand";
+import { ContainerInspectCommand } from "./ContainerInspectCommand";
+import { ContainerListCommand } from "./ContainerListCommand";
+import { ContainerMenuCommand } from "./ContainerMenuCommand";
+import { CreateContainerCommand } from "./CreateContainerCommand";
+import { OpenContainerCommand } from "./OpenContainerCommand";
+import { RemoveContainerCommand } from "./RemoveContainerCommand";
 
 export const ContainerCommand: CommandModule = {
   command: "container",
@@ -23,3 +23,4 @@ export const ContainerCommand: CommandModule = {
 };
 
 export default ContainerCommand;
+module.exports = ContainerCommand;

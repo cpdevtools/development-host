@@ -1,4 +1,4 @@
-import { DevContainer } from "./DevContainer.js";
+import { DevContainer } from "./DevContainer";
 
 export interface DevEnvironment {
   path: string;

@@ -2,9 +2,9 @@ import { cloneRepo, getContainerLaunchUrl, readJsonFile } from "@cpdevtools/lib-
 import glob from "fast-glob";
 import { readdir, rm, rmdir } from "fs/promises";
 import Path from "path/posix";
-import { DEFAULT_CONTAINER_ROOT, loadConfig } from "../config/index.js";
-import { DevContainer } from "./DevContainer.js";
-import { DevEnvironment } from "./DevEnvironment.js";
+import { DEFAULT_CONTAINER_ROOT, loadConfig } from "../config";
+import { DevContainer } from "./DevContainer";
+import { DevEnvironment } from "./DevEnvironment";
 
 async function loadEnvironmentData() {
   const config = await loadConfig();
@@ -16,7 +16,7 @@ async function loadEnvironmentData() {
     containers: [],
   };
 
-  const containerPaths = await glob(Path.join(root, "*/*/.devcontainer/devcontainer.json"), {
+  const containerPaths = await glob(Path.join(root, "*/*/.devcontainer/devcontaineron"), {
     dot: true,
   });
   for (const cPath of containerPaths) {

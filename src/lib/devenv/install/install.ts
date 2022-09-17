@@ -18,16 +18,15 @@ import chalk from "chalk";
 import { existsSync } from "fs";
 import { mkdir, readFile, writeFile } from "fs/promises";
 import ini from "ini";
-import inquirer from "inquirer";
 import Zip from "node-stream-zip";
 import path from "path";
 import { exit } from "process";
 
 import sha256File from "sha256-file";
-import { promptConfig } from "../config/index.js";
-import { onStartup } from "../startup/startup.js";
-import { applicationFooter, applicationHeader, subTaskFooter, subTaskHeader, taskFooter, taskHeader } from "../ui/headers.js";
-import { installOrUpdateCore } from "./update.js";
+import { promptConfig } from "../config";
+import { onStartup } from "../startup/startup";
+import { applicationFooter, applicationHeader, subTaskFooter, subTaskHeader, taskFooter, taskHeader } from "../ui/headers";
+import { installOrUpdateCore } from "./update";
 
 export const INSTALL_NAME = "DevelopmentContainerHost";
 const INSTALL_TEMP_DIR = ".temp";
@@ -83,7 +82,7 @@ export async function installOnWindows(resumeOn: number = 0) {
       }
 
       applicationHeader(msgs.join("\n"), warnAny ? "warn" : "");
-
+      const inquirer = (await import("inquirer")).default;
       if (warnAny) {
         const answers = await inquirer.prompt({
           type: "confirm",
@@ -142,6 +141,7 @@ async function isContainerHostInstalled() {
 }
 
 async function installUbuntuWsl() {
+  const inquirer = (await import("inquirer")).default;
   let answers: any = await inquirer.prompt({
     type: "input",
     name: "dir",
@@ -164,6 +164,7 @@ async function installUbuntuWsl() {
 async function setupUser() {
   let username: string = "";
   while (!username) {
+    const inquirer = (await import("inquirer")).default;
     const answers = await inquirer.prompt({
       type: "input",
       name: "username",

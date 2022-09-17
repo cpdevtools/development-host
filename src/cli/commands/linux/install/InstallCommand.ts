@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { CommandModule } from "yargs";
-import { applicationHeader } from "../../../..//lib/devenv/ui/headers.js";
-import { install } from "../../../../lib/devenv/install/install.js";
+import { applicationHeader } from "../../../..//lib/devenv/ui/headers";
+import { install } from "../../../../lib/devenv/install/install";
 
 export const InstallCommand: CommandModule = {
   command: "install",

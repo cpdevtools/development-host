@@ -1,3 +1,4 @@
-import { OnStartCommand } from "./OnStartCommand.js";
+import { OnStartCommand } from "./OnStartCommand";
 
 export default [OnStartCommand];
+module.exports = [OnStartCommand];

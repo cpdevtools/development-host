@@ -1,7 +1,6 @@
-import { applicationHeader, taskFooter, taskHeader } from "../../../../lib/devenv/ui/headers.js";
+import { applicationHeader, taskFooter, taskHeader } from "../../../../lib/devenv/ui/headers";
 import { CommandModule } from "yargs";
 import chalk from "chalk";
-import inquirer from "inquirer";
 
 export const OnStartCommand: CommandModule = {
   command: "onstart",
@@ -19,7 +18,7 @@ Make sure you wont loose any works
 `.trim(),
       "warn"
     );
-
+    const inquirer = (await import("inquirer")).default;
     const answers = await inquirer.prompt({
       type: "confirm",
       name: "continue",

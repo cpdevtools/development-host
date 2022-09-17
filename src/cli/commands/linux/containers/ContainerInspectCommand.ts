@@ -1,6 +1,6 @@
 import { printAsYaml } from "@cpdevtools/lib-node-utilities";
 import { CommandModule } from "yargs";
-import { listContainers } from "../../../../lib/devenv/containers/index.js";
+import { listContainers } from "../../../../lib/devenv/containers";
 
 export const ContainerInspectCommand: CommandModule<{}, ContainerInspectCommandArgs> = {
   command: "inspect <container-id>",
