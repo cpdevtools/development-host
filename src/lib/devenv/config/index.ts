@@ -12,7 +12,7 @@ import {
 
 import { existsSync } from "fs";
 import fs, { mkdir, readdir } from "fs/promises";
-import inquirer from "inquirer";
+
 import lodash from "lodash";
 
 import { homedir } from "os";
@@ -287,6 +287,8 @@ export async function promptPAT(confirm: boolean = true) {
   let octokit = await githubLogin();
   let configToken: string = config.token;
 
+  const inquirer = (await import("inquirer")).default;
+
   if (!octokit) {
     const { token } = await inquirer.prompt({
       name: "token",
@@ -321,7 +323,7 @@ async function setupProfile(name?: string) {
   profile.author ??= {};
 
   taskHeader(`Setup profile ${chalk.cyan(profile.name)}`);
-
+  const inquirer = (await import("inquirer")).default;
   const answers = await inquirer.prompt([
     {
       type: "input",
@@ -360,6 +362,7 @@ async function applyConfigs(profileName?: string) {
 }
 
 async function setupUserProfilesRepo(username: string, token: string, octokit: Octokit) {
+  const inquirer = (await import("inquirer")).default;
   const repo = `${username}/cpdevtools-dch-settings`;
   const repoDir = path.join(USER_CONFIG_DIRECTORY, `${username}/cpdevtools-dch-settings`);
   const currentUserDir = path.join(USER_CONFIG_DIRECTORY, username);
@@ -445,6 +448,7 @@ async function initializeProfileConfig(repo: string, username: string, token: st
 }
 
 async function createNewProfile(username: string, profiles: string[]) {
+  const inquirer = (await import("inquirer")).default;
   const alphaNumericCheck = /^[a-z0-9_-]+$/;
   let profileName: string = "";
   while (!profileName) {

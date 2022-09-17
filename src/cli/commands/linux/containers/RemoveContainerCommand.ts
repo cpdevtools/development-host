@@ -1,4 +1,3 @@
-import inquirer from "inquirer";
 import { CommandModule } from "yargs";
 import { removeContainer } from "../../../../lib/devenv/containers";
 export const RemoveContainerCommand: CommandModule<{}, RemoveContainerCommandArgs> = {
@@ -11,6 +10,7 @@ export const RemoveContainerCommand: CommandModule<{}, RemoveContainerCommandArg
       demandOption: true,
     }),
   handler: async (args): Promise<void> => {
+    const inquirer = (await import("inquirer")).default;
     const answers = await inquirer.prompt({
       type: "confirm",
       name: "remove",

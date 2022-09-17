@@ -1,6 +1,6 @@
 {
   "name": "@cpdevtools/development-host",
-  "version": "0.4.50",
+  "version": "0.4.51",
   "repository": "https://github.com/cpdevtools/development-host",
   "typings": "./index.d.ts",
   "main": "./index.js",
@@ -56,7 +56,7 @@
     "*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
-    "@cpdevtools/lib-node-utilities": "^0.4.20",
+    "@cpdevtools/lib-node-utilities": "^0.4.21",
     "@inquirer/select": "0.0.26-alpha.0",
     "@octokit/auth-token": "^3.0.1",
     "@octokit/request-error": "^3.0.1",

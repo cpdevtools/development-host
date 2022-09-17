@@ -11,3 +11,4 @@ export const PostInstallCommand: CommandModule = {
 };
 
 export default PostInstallCommand;
+module.exports = PostInstallCommand;

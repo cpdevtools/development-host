@@ -23,3 +23,4 @@ export const ContainerCommand: CommandModule = {
 };
 
 export default ContainerCommand;
+module.exports = ContainerCommand;

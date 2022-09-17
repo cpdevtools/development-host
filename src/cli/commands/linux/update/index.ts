@@ -30,3 +30,4 @@ export const UpdateCommand: CommandModule<{}, UpdateCommandOptions> = {
 };
 
 export default UpdateCommand;
+module.exports = UpdateCommand;

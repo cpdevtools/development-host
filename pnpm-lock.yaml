@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  "@cpdevtools/lib-node-utilities": ^0.4.20
+  "@cpdevtools/lib-node-utilities": ^0.4.21
   "@inquirer/select": 0.0.26-alpha.0
   "@octokit/auth-token": ^3.0.1
   "@octokit/request-error": ^3.0.1
@@ -42,7 +42,7 @@ specifiers:
   yargs: ^17.5.1
 
 dependencies:
-  "@cpdevtools/lib-node-utilities": 0.4.20
+  "@cpdevtools/lib-node-utilities": 0.4.21
   "@inquirer/select": 0.0.26-alpha.0
   "@octokit/auth-token": 3.0.1
   "@octokit/request-error": 3.0.1
@@ -106,8 +106,8 @@ packages:
       js-tokens: 4.0.0
     dev: true
 
-  /@cpdevtools/lib-node-utilities/0.4.20:
-    resolution: { integrity: sha512-sN9W7oEPlnxCG+v8PiRYt2ixoNC+6O1GX8vlypVM0PzIVTfNPHs+5l6DFDvY/P2tpZsRaxZwqGTJBPlJH44IzQ== }
+  /@cpdevtools/lib-node-utilities/0.4.21:
+    resolution: { integrity: sha512-EHmUHwWQcs2Ui8o5vY7JXCAMkA4mgEpcz1arfE+C1BXQNrA/+ZYfkGfDIWdkxU63z1UQiLWzyeuYUZ0mN2bdOw== }
     engines: { node: ">=14.16" }
     dependencies:
       "@octokit/rest": 19.0.4

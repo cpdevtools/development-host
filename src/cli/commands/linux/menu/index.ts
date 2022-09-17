@@ -8,3 +8,4 @@ const Command: CommandModule = {
 };
 
 export default Command;
+module.exports = Command;
