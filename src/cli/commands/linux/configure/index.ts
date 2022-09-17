@@ -113,5 +113,4 @@ export const ConfigCommandGroup: CommandModule = {
   handler: (args): void | Promise<void> => {},
 };
 
-export default ConfigCommandGroup;
 module.exports = ConfigCommandGroup;
