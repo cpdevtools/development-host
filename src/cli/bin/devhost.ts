@@ -10,6 +10,7 @@ try {
       await yargs(hideBin(process.argv))
         .scriptName("devhost")
         .commandDir(`../commands/${os.platform() === "win32" ? "win" : "linux"}`, { extensions: ["js"], recurse: true })
+        .fail(false)
         .parse();
     } catch (e) {
       console.error(e);
