@@ -19,7 +19,7 @@
     "skipLibCheck": true,
     "useDefineForClassFields": true,
     "strict": true,
-    "traceResolution": false,
+    "traceResolution": true,
     "typeRoots": ["node_modules/@types", "src/types"],
     "lib": ["esnext", "ES2022"],
     "types": ["node"]
