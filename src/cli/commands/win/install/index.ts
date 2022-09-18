@@ -7,7 +7,9 @@ export const PostInstallCommand: CommandModule = {
   builder: (yargs) => yargs,
   handler: async (args): Promise<void> => {
     try {
+      console.log("installOnWindows");
       await installOnWindows();
+      console.log("after installOnWindows");
     } catch (e) {
       console.error(e);
       throw e;
