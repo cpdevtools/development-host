@@ -1,5 +1,4 @@
-import { toFormattedYaml } from "@cpdevtools/lib-node-utilities";
-import chalk from "chalk";
+import { importChalk, toFormattedYaml } from "@cpdevtools/lib-node-utilities";
 import { exit } from "process";
 
 import { Argv, CommandModule } from "yargs";
@@ -94,6 +93,7 @@ export const ConfigCommand: CommandModule<{}, ConfigCommandArgs> = {
       array: true,
     }) as Argv<ConfigCommandArgs>,
   handler: async (args): Promise<void> => {
+    const chalk = await importChalk();
     if (args.set?.length) {
       const pairs = args.set!.map((s) => s.split("=")).map((p) => [p.shift(), p.join("=")] as [string, string]);
       await setConfigProperties(pairs);

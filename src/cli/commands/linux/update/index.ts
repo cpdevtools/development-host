@@ -1,5 +1,5 @@
-import { exec } from "@cpdevtools/lib-node-utilities";
-import chalk from "chalk";
+import { exec, importChalk } from "@cpdevtools/lib-node-utilities";
+
 import { exit } from "process";
 import { CommandModule } from "yargs";
 import { installOrUpdateCore, updateSelf } from "../../../../lib/devenv/install/update";
@@ -18,6 +18,8 @@ export const UpdateCommand: CommandModule<{}, UpdateCommandOptions> = {
       default: false,
     }),
   handler: async (args): Promise<void> => {
+    const chalk = await importChalk();
+
     if (!args.afterSelfUpdate) {
       console.info(applicationHeader(`Development Container Host\n${chalk.grey("Updater")}`));
       await updateSelf();

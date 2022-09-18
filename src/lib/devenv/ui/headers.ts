@@ -1,5 +1,4 @@
 import boxen from "boxen";
-import chalk from "chalk";
 
 export function applicationHeader(text: string, color?: "" | "warn"): void {
   console.info(
@@ -48,7 +47,7 @@ export function taskHeader(text: string): void {
 export function taskFooter(text: string): void {
   console.info(
     "\n" +
-      boxen(chalk.grey(text), {
+      boxen(text, {
         padding: 0,
         margin: 0,
         borderStyle: "single",
@@ -76,7 +75,7 @@ export function subTaskHeader(text: string): void {
 export function subTaskFooter(text: string): void {
   console.info(
     "\n" +
-      boxen(chalk.grey(text), {
+      boxen(text, {
         padding: 0,
         margin: 0,
         borderStyle: "single",
