@@ -4,14 +4,14 @@ import {
   gitClone,
   gitIsRepo,
   gitSync,
+  importChalk,
+  importInquirer,
+  importInquirerSelect,
   printYamlFile,
   readYamlFile,
   setConfig,
   writeYamlFile,
 } from "@cpdevtools/lib-node-utilities";
-
-import type inquirer from "inquirer";
-type Inquirer = typeof inquirer;
 
 import { existsSync } from "fs";
 import fs, { mkdir, readdir } from "fs/promises";
@@ -24,8 +24,7 @@ import path, { dirname } from "path";
 import { createTokenAuth } from "@octokit/auth-token";
 import { RequestError } from "@octokit/request-error";
 import { Octokit } from "@octokit/rest";
-import chalk from "chalk";
-import { dynamicImport } from "tsimportlib";
+
 import { applicationHeader, taskHeader } from "../ui/headers";
 export const USER_DIRECTORY = path.join(homedir(), ".dch");
 export const USER_CONFIG_DIRECTORY = path.join(USER_DIRECTORY, "config");
@@ -287,8 +286,7 @@ function validateConfig(data: any, allowPartial: boolean = true): ValidationResu
 */
 
 export async function promptPAT(confirm: boolean = true) {
-  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
-
+  const inquirer = await importInquirer();
   const config = await loadConfig();
   let octokit = await githubLogin();
   let configToken: string = config.token;
@@ -310,6 +308,8 @@ export async function promptPAT(confirm: boolean = true) {
 }
 
 export async function promptConfig(confirm: boolean = true) {
+  const chalk = await importChalk();
+
   const config = await loadConfig();
   applicationHeader(`Development Container Host\n${chalk.gray("Configuration")}`);
 
@@ -323,7 +323,8 @@ export async function promptConfig(confirm: boolean = true) {
 }
 
 async function setupProfile(name?: string) {
-  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
+  const chalk = await importChalk();
+  const inquirer = await importInquirer();
 
   const profile = await loadProfileConfig(name);
   profile.author ??= {};
@@ -367,7 +368,7 @@ async function applyConfigs(profileName?: string) {
 }
 
 async function setupUserProfilesRepo(username: string, token: string, octokit: Octokit) {
-  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
+  const inquirer = await importInquirer();
   const repo = `${username}/cpdevtools-dch-settings`;
   const repoDir = path.join(USER_CONFIG_DIRECTORY, `${username}/cpdevtools-dch-settings`);
   const currentUserDir = path.join(USER_CONFIG_DIRECTORY, username);
@@ -424,8 +425,7 @@ async function initializeProfileConfig(repo: string, username: string, token: st
   if (!selectedProfile) {
     const profileDirs = await readdir(profilesDir);
     const profileDirsLower = profileDirs.map((d) => d.toLocaleLowerCase());
-
-    const select = (await dynamicImport("@inquirer/select/dist/index.js", module)).default;
+    const select = await importInquirerSelect();
 
     selectedProfile = await select({
       message: "Choose or create a profile for this computer",
@@ -453,7 +453,7 @@ async function initializeProfileConfig(repo: string, username: string, token: st
 }
 
 async function createNewProfile(username: string, profiles: string[]) {
-  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
+  const inquirer = await importInquirer();
 
   const alphaNumericCheck = /^[a-z0-9_-]+$/;
   let profileName: string = "";

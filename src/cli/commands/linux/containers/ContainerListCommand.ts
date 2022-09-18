@@ -1,4 +1,4 @@
-import chalk from "chalk";
+import { importChalk } from "@cpdevtools/lib-node-utilities";
 import { CommandModule } from "yargs";
 import { listContainers } from "../../../../lib/devenv/containers";
 
@@ -18,6 +18,7 @@ export const ContainerListCommand: CommandModule<{}, ContainerListCommandArgs> =
         default: false,
       }),
   handler: async (args): Promise<void> => {
+    const chalk = await importChalk();
     const containers = await listContainers();
     console.group();
     containers.forEach((c: any) => {

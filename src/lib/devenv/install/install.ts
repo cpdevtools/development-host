@@ -1,6 +1,8 @@
 import {
   exec,
   FileDownload,
+  importChalk,
+  importInquirer,
   installWSL,
   isApplicationRunning,
   isDockerDesktopRunning,
@@ -13,10 +15,6 @@ import {
   startDockerDesktop,
   updateWSL,
 } from "@cpdevtools/lib-node-utilities";
-import chalk from "chalk";
-import { dynamicImport } from "tsimportlib";
-import type inquirer from "inquirer";
-type Inquirer = typeof inquirer;
 
 import { existsSync } from "fs";
 import { mkdir, readFile, writeFile } from "fs/promises";
@@ -64,7 +62,9 @@ async function runTasks(tasks: Task[]) {
 
 export async function installOnWindows(resumeOn: number = 0) {
   console.log("installOnWindows: ", resumeOn);
-  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
+  const chalk = await importChalk();
+  const inquirer = await importInquirer();
+
   console.log("loaded inq");
   const tasks: Task[] = [
     async () => {
@@ -150,7 +150,7 @@ async function isContainerHostInstalled() {
 }
 
 async function installUbuntuWsl() {
-  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
+  const inquirer = await importInquirer();
 
   let answers: any = await inquirer.prompt({
     type: "input",
@@ -172,7 +172,7 @@ async function installUbuntuWsl() {
 }
 
 async function setupUser() {
-  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
+  const inquirer = await importInquirer();
 
   let username: string = "";
   while (!username) {

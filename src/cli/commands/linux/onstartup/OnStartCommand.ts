@@ -1,17 +1,15 @@
-import { applicationHeader, taskFooter, taskHeader } from "../../../../lib/devenv/ui/headers";
+import { importChalk, importInquirer } from "@cpdevtools/lib-node-utilities";
+
 import { CommandModule } from "yargs";
-import chalk from "chalk";
-import { dynamicImport } from "tsimportlib";
-import type inquirer from "inquirer";
-type Inquirer = typeof inquirer;
+import { applicationHeader } from "../../../../lib/devenv/ui/headers";
 
 export const OnStartCommand: CommandModule = {
   command: "onstart",
   describe: false,
   builder: (yargs) => yargs,
   handler: async (args): Promise<void> => {
-    const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
-
+    const chalk = await importChalk();
+    const inquirer = await importInquirer();
     applicationHeader(
       `Installing ${chalk.cyan(`Development Container Host`)}
 
