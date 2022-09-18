@@ -7,5 +7,4 @@ const Command: CommandModule = {
   handler: (args): void | Promise<void> => {},
 };
 
-export default Command;
 module.exports = Command;

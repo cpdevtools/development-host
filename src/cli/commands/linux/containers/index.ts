@@ -22,5 +22,4 @@ export const ContainerCommand: CommandModule = {
   handler: (_): void => {},
 };
 
-export default ContainerCommand;
 module.exports = ContainerCommand;
