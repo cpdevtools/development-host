@@ -1,6 +1,9 @@
 import { applicationHeader, taskFooter, taskHeader } from "../../../../lib/devenv/ui/headers";
 import { CommandModule } from "yargs";
 import chalk from "chalk";
+import { dynamicImport } from "tsimportlib";
+import type inquirer from "inquirer";
+type Inquirer = typeof inquirer;
 
 export const OnStartCommand: CommandModule = {
   command: "onstart",
@@ -18,7 +21,7 @@ Make sure you wont loose any works
 `.trim(),
       "warn"
     );
-    const inquirer = (await import("inquirer")).default;
+    const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
     const answers = await inquirer.prompt({
       type: "confirm",
       name: "continue",
