@@ -42,6 +42,7 @@ const INSTALL_UBUNTU_X86_SOURCE_FILE = "Ubuntu_2204.0.10.0_x64.appx";
 const INSTALL_UBUNTU_INSTALL_FILE = path.join(INSTALL_DIR, "install.tar.gz");
 
 type Task = () => void | boolean | Promise<void | boolean>;
+console.log("loaded install.js");
 
 async function runTasks(tasks: Task[]) {
   for (let i = 0; i < tasks.length; i++) {
@@ -62,14 +63,17 @@ async function runTasks(tasks: Task[]) {
 }
 
 export async function installOnWindows(resumeOn: number = 0) {
+  console.log("installOnWindows: ", resumeOn);
   const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
-
+  console.log("loaded inq");
   const tasks: Task[] = [
     async () => {
+      console.log("task", 1, "start");
       const warnDD = await isDockerDesktopRunning();
       const warnWsl = await isWslInstalled();
       const warnVsCode = await isApplicationRunning("Code.exe");
       const warnAny = warnDD || warnWsl || warnVsCode;
+      console.log("task", 1, "1");
 
       let msgs = [`Installing ${chalk.cyan(`Development Container Host`)}\n`];
 
@@ -85,9 +89,9 @@ export async function installOnWindows(resumeOn: number = 0) {
       if (warnAny) {
         msgs.push(`Make sure you won't loose any work.`);
       }
-
+      console.log("task", 1, "2");
       applicationHeader(msgs.join("\n"), warnAny ? "warn" : "");
-
+      console.log("task", 1, "3");
       if (warnAny) {
         const answers = await inquirer.prompt({
           type: "confirm",
@@ -95,12 +99,12 @@ export async function installOnWindows(resumeOn: number = 0) {
           message: "Continue?",
           default: true,
         });
-
+        console.log("task", 1, "4");
         if (answers.continue !== true) {
           exit();
         }
       }
-
+      console.log("task", 1, "5");
       await killDockerDesktop();
 
       if (!(await isWslInstalled())) {
