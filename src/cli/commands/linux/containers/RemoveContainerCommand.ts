@@ -15,6 +15,7 @@ export const RemoveContainerCommand: CommandModule<{}, RemoveContainerCommandArg
     }),
   handler: async (args): Promise<void> => {
     const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
+
     const answers = await inquirer.prompt({
       type: "confirm",
       name: "remove",

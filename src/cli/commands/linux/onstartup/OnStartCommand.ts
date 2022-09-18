@@ -10,6 +10,8 @@ export const OnStartCommand: CommandModule = {
   describe: false,
   builder: (yargs) => yargs,
   handler: async (args): Promise<void> => {
+    const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
+
     applicationHeader(
       `Installing ${chalk.cyan(`Development Container Host`)}
 
@@ -21,7 +23,6 @@ Make sure you wont loose any works
 `.trim(),
       "warn"
     );
-    const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
     const answers = await inquirer.prompt({
       type: "confirm",
       name: "continue",

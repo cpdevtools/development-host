@@ -287,11 +287,11 @@ function validateConfig(data: any, allowPartial: boolean = true): ValidationResu
 */
 
 export async function promptPAT(confirm: boolean = true) {
+  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
+
   const config = await loadConfig();
   let octokit = await githubLogin();
   let configToken: string = config.token;
-
-  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
 
   if (!octokit) {
     const { token } = await inquirer.prompt({
@@ -323,11 +323,12 @@ export async function promptConfig(confirm: boolean = true) {
 }
 
 async function setupProfile(name?: string) {
+  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
+
   const profile = await loadProfileConfig(name);
   profile.author ??= {};
 
   taskHeader(`Setup profile ${chalk.cyan(profile.name)}`);
-  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
   const answers = await inquirer.prompt([
     {
       type: "input",
@@ -452,7 +453,8 @@ async function initializeProfileConfig(repo: string, username: string, token: st
 }
 
 async function createNewProfile(username: string, profiles: string[]) {
-  const inquirer = (await import("inquirer")).default;
+  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
+
   const alphaNumericCheck = /^[a-z0-9_-]+$/;
   let profileName: string = "";
   while (!profileName) {
