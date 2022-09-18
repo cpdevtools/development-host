@@ -10,6 +10,9 @@ import {
   writeYamlFile,
 } from "@cpdevtools/lib-node-utilities";
 
+import type inquirer from "inquirer";
+type Inquirer = typeof inquirer;
+
 import { existsSync } from "fs";
 import fs, { mkdir, readdir } from "fs/promises";
 
@@ -22,6 +25,7 @@ import { createTokenAuth } from "@octokit/auth-token";
 import { RequestError } from "@octokit/request-error";
 import { Octokit } from "@octokit/rest";
 import chalk from "chalk";
+import { dynamicImport } from "tsimportlib";
 import { applicationHeader, taskHeader } from "../ui/headers";
 export const USER_DIRECTORY = path.join(homedir(), ".dch");
 export const USER_CONFIG_DIRECTORY = path.join(USER_DIRECTORY, "config");
@@ -287,7 +291,7 @@ export async function promptPAT(confirm: boolean = true) {
   let octokit = await githubLogin();
   let configToken: string = config.token;
 
-  const inquirer = (await import("inquirer")).default;
+  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
 
   if (!octokit) {
     const { token } = await inquirer.prompt({
@@ -323,7 +327,7 @@ async function setupProfile(name?: string) {
   profile.author ??= {};
 
   taskHeader(`Setup profile ${chalk.cyan(profile.name)}`);
-  const inquirer = (await import("inquirer")).default;
+  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
   const answers = await inquirer.prompt([
     {
       type: "input",
@@ -362,7 +366,7 @@ async function applyConfigs(profileName?: string) {
 }
 
 async function setupUserProfilesRepo(username: string, token: string, octokit: Octokit) {
-  const inquirer = (await import("inquirer")).default;
+  const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
   const repo = `${username}/cpdevtools-dch-settings`;
   const repoDir = path.join(USER_CONFIG_DIRECTORY, `${username}/cpdevtools-dch-settings`);
   const currentUserDir = path.join(USER_CONFIG_DIRECTORY, username);
@@ -420,7 +424,7 @@ async function initializeProfileConfig(repo: string, username: string, token: st
     const profileDirs = await readdir(profilesDir);
     const profileDirsLower = profileDirs.map((d) => d.toLocaleLowerCase());
 
-    const select = (await import("@inquirer/select/dist/index.js")).default;
+    const select = (await dynamicImport("@inquirer/select/dist/index.js", module)).default;
 
     selectedProfile = await select({
       message: "Choose or create a profile for this computer",
@@ -443,7 +447,7 @@ async function initializeProfileConfig(repo: string, username: string, token: st
       selectedProfile = config.profile!;
     }
 
-    await setConfigProperties([["profile", selectedProfile]]);
+    await setConfigProperties([["profile", selectedProfile!]]);
   }
 }
 

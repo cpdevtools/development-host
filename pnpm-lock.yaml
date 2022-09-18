@@ -34,6 +34,7 @@ specifiers:
   sha256-file: ^1.0.0
   strip-color: ^0.1.0
   ts-node: ^10.9.1
+  tsimportlib: ^0.0.3
   tslib: ^2.4.0
   type-fest: ^2.18.0
   typescript: ^4.7.4
@@ -42,7 +43,7 @@ specifiers:
   yargs: ^17.5.1
 
 dependencies:
-  "@cpdevtools/lib-node-utilities": 0.4.21
+  "@cpdevtools/lib-node-utilities": 0.4.22
   "@inquirer/select": 0.0.26-alpha.0
   "@octokit/auth-token": 3.0.1
   "@octokit/request-error": 3.0.1
@@ -63,6 +64,7 @@ dependencies:
   sha256-file: 1.0.0
   strip-color: 0.1.0
   ts-node: 10.9.1_hwinnrf7y5nyyzygpj45jmvjia
+  tsimportlib: 0.0.3
   tslib: 2.4.0
   typescript: 4.8.2
   unzipper: 0.10.11
@@ -106,8 +108,8 @@ packages:
       js-tokens: 4.0.0
     dev: true
 
-  /@cpdevtools/lib-node-utilities/0.4.21:
-    resolution: { integrity: sha512-EHmUHwWQcs2Ui8o5vY7JXCAMkA4mgEpcz1arfE+C1BXQNrA/+ZYfkGfDIWdkxU63z1UQiLWzyeuYUZ0mN2bdOw== }
+  /@cpdevtools/lib-node-utilities/0.4.22:
+    resolution: { integrity: sha512-KJ9x2t1zy+KgthElfIZHgx+MMrA5nHhsAK9hrnWt9HDKn2+1MkLJyY3c8iyHk2vODo7KoDSoYGhc3QHb6/ugQQ== }
     engines: { node: ">=14.16" }
     dependencies:
       "@octokit/rest": 19.0.4
@@ -129,6 +131,7 @@ packages:
       simple-git: 3.13.0
       strip-color: 0.1.0
       ts-node: 10.9.1_hwinnrf7y5nyyzygpj45jmvjia
+      tsimportlib: 0.0.3
       tslib: 2.4.0
       type-fest: 2.19.0
       typescript: 4.8.2
@@ -1970,6 +1973,10 @@ packages:
       typescript: 4.8.2
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
+    dev: false
+
+  /tsimportlib/0.0.3:
+    resolution: { integrity: sha512-U9sW2/3D0P4IVRnhH2RCqjCP0sG66qvb4ahB0aQln5xGMphDjntz5rdk0rFZ6Fg+lW3L+i+gRnIl4VvNBvxiQw== }
     dev: false
 
   /tslib/2.4.0:

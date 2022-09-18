@@ -1,5 +1,9 @@
 import { CommandModule } from "yargs";
 import { removeContainer } from "../../../../lib/devenv/containers";
+import { dynamicImport } from "tsimportlib";
+import type inquirer from "inquirer";
+type Inquirer = typeof inquirer;
+
 export const RemoveContainerCommand: CommandModule<{}, RemoveContainerCommandArgs> = {
   command: "remove <container-id>",
   describe: "Remove a container",
@@ -10,7 +14,7 @@ export const RemoveContainerCommand: CommandModule<{}, RemoveContainerCommandArg
       demandOption: true,
     }),
   handler: async (args): Promise<void> => {
-    const inquirer = (await import("inquirer")).default;
+    const inquirer = (await dynamicImport("inquirer", module)).default as Inquirer;
     const answers = await inquirer.prompt({
       type: "confirm",
       name: "remove",
