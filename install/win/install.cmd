@@ -40,6 +40,6 @@ setlocal
   goto :nodeReady
 
 :nodeReady
-  call npm install --location=global typescript ts-node @cpdevtools/development-host@latest
-  call devhost install
+  call C:\Program Files\nodejs\npm install --location=global typescript ts-node @cpdevtools/development-host@latest
+  call C:\Users\myrdd\AppData\Roaming\npm\devhost install
 endlocal
