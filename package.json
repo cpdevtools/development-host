@@ -1,6 +1,6 @@
 {
   "name": "@cpdevtools/development-host",
-  "version": "0.4.66",
+  "version": "0.4.67",
   "repository": "https://github.com/cpdevtools/development-host",
   "typings": "./index.d.ts",
   "main": "./index.js",
@@ -28,7 +28,8 @@
     "npm:release:publish": "pnpm publish ./dist --access public --publish-branch 'release/latest'",
     "fix": "run-s fix:*",
     "fix:prettier": "prettier --write --ignore-unknown .",
-    "pre-commit": "echo pre-commit",
+    "pre-commit": "run-s pre-commit:*",
+    "pre-commit:tags": "git tag | xargs git tag -d",
     "watch:build": "tsc -p tsconfig.json -w",
     "reset-hard": "git clean -dfx && git reset --hard && pnpm i",
     "start": "run-p start:*",
@@ -57,7 +58,7 @@
     "*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
-    "@cpdevtools/lib-node-utilities": "^0.4.31",
+    "@cpdevtools/lib-node-utilities": "^0.4.32",
     "@inquirer/select": "0.0.26-alpha.0",
     "@octokit/auth-token": "^3.0.1",
     "@octokit/request-error": "^3.0.1",
