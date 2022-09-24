@@ -6,6 +6,7 @@ import {
   installWSL,
   isApplicationRunning,
   isDockerDesktopRunning,
+  isValidInstallFile,
   isWslDistroInstalled,
   isWslInstalled,
   killDockerDesktop,
@@ -14,6 +15,7 @@ import {
   runOnceAfterRestart,
   startDockerDesktop,
   updateWSL,
+  wingetInfo,
 } from "@cpdevtools/lib-node-utilities";
 
 import { existsSync } from "fs";
@@ -23,7 +25,6 @@ import Zip from "node-stream-zip";
 import path from "path";
 import { exit } from "process";
 
-import sha256File from "sha256-file";
 import { promptConfig } from "../config";
 import { onStartup } from "../startup/startup";
 import { applicationFooter, applicationHeader, subTaskFooter, subTaskHeader, taskFooter, taskHeader } from "../ui/headers";
@@ -32,8 +33,7 @@ import { installOrUpdateCore } from "./update";
 export const INSTALL_NAME = "DevelopmentContainerHost";
 const INSTALL_TEMP_DIR = ".temp";
 const INSTALL_DIR = "install";
-const INSTALL_UBUNTU_URL = "https://wslstorestorage.blob.core.windows.net/wslblob/Ubuntu2204-220620.AppxBundle";
-const INSTALL_UBUNTU_SHA = "dd60bd853d15fbd14480e5d4e3c53d8b14710a43eb45f82558201a3dcdfe51b1";
+const INSTALL_ID = "Canonical.Ubuntu.2204";
 const INSTALL_UBUNTU_DOWNLOAD_FILE = path.join(INSTALL_TEMP_DIR, "ubuntu.bundle.zip");
 const INSTALL_UBUNTU_X86_DEST_FILE = path.join(INSTALL_TEMP_DIR, "ubuntu.x86.zip");
 const INSTALL_UBUNTU_X86_SOURCE_FILE = "Ubuntu_2204.0.10.0_x64.appx";
@@ -214,30 +214,14 @@ async function downloadUbuntuWsl(dir: string) {
 
       const ubuntuDownloadFile = path.join(dir, INSTALL_UBUNTU_DOWNLOAD_FILE);
 
-      let download = true;
-
-      if (existsSync(ubuntuDownloadFile)) {
-        download = false;
-        const check = await new Promise<string>((res, rej) =>
-          sha256File(ubuntuDownloadFile, (error, check) => (error ? rej(error) : res(check!)))
-        );
-        if (check !== INSTALL_UBUNTU_SHA) {
-          download = true;
-        }
-      }
-
-      if (download) {
-        const dl = new FileDownload(INSTALL_UBUNTU_URL, ubuntuDownloadFile);
+      if (!(await isValidInstallFile(ubuntuDownloadFile, INSTALL_ID))) {
+        const info = await wingetInfo(INSTALL_ID);
+        const dl = new FileDownload(info.installer.downloadUrl, ubuntuDownloadFile);
         await dl.download(true);
-
-        const check = await new Promise<string>((res, rej) =>
-          sha256File(ubuntuDownloadFile, (error, check) => (error ? rej(error) : res(check!)))
-        );
-        if (check !== INSTALL_UBUNTU_SHA) {
-          throw new Error(`'${ubuntuDownloadFile}' failed to match checksum '${INSTALL_UBUNTU_SHA}'. Was '${check}'`);
+        if (!(await isValidInstallFile(ubuntuDownloadFile, INSTALL_ID))) {
+          throw new Error(`'${ubuntuDownloadFile}' failed to match checksum '${info.installer.SHA256}'.`);
         }
       }
-
       await extractUbuntu(dir);
     } finally {
       //await rm(tmpDir, { force: true, recursive: true });
