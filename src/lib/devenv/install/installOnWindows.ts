@@ -187,7 +187,7 @@ function extractUbuntuOuter(ubuntuDownloadFile: string, extractPath: string) {
   });
 }
 function extractUbuntuInner(ubuntuZipPath: string, installDir: string) {
-  return new Promise<void>((res, rej) => {
+  return new Promise<void>(async (res, rej) => {
     const zip = new Zip({
       file: ubuntuZipPath,
       storeEntries: true,
@@ -196,27 +196,31 @@ function extractUbuntuInner(ubuntuZipPath: string, installDir: string) {
       console.error("[ERROR]", err);
       rej(err);
     });
-    let count = zip.entriesCount;
 
+    const p: Promise<any>[] = [];
     zip.on("entry", async function (entry) {
       console.info(`Extracting '${entry.name}'...`);
       const ePath = path.normalize(path.join(installDir, entry.name));
       if (ePath.startsWith(installDir)) {
         if (entry.isFile) {
           await mkdir(path.dirname(ePath), { recursive: true });
-          zip.extract(entry, ePath, (err, r) => {
-            count--;
-            if (!err) {
-              console.info(`Extracted '${entry.name}'`);
-            } else {
-              console.error(err);
-            }
-            if (count === 0) {
-              res();
-            }
-          });
+          p.push(
+            new Promise<void>((resolve, reject) => {
+              zip.extract(entry, ePath, (err, r) => {
+                if (err) {
+                  reject(err);
+                } else {
+                  console.info(`Extracted '${entry.name}'`);
+                  resolve();
+                }
+              });
+            })
+          );
         }
       }
     });
+    await Promise.all(p);
+    console.info(`Done`);
+    res();
   });
 }
