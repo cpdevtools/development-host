@@ -36,7 +36,7 @@ const INSTALL_DIR = "install";
 const INSTALL_ID = "Canonical.Ubuntu.2204";
 const INSTALL_UBUNTU_DOWNLOAD_FILE = path.join(INSTALL_TEMP_DIR, "ubuntu.bundle.zip");
 const INSTALL_UBUNTU_X86_DEST_FILE = path.join(INSTALL_TEMP_DIR, "ubuntu.x86.zip");
-const INSTALL_UBUNTU_X86_SOURCE_FILE = "Ubuntu_2204.0.10.0_x64.appx";
+const INSTALL_UBUNTU_X86_SOURCE_FILE = /Ubuntu_2204\..*?_x64\.appx/;
 const INSTALL_UBUNTU_INSTALL_FILE = path.join(INSTALL_DIR, "install.tar.gz");
 
 type Task = () => void | boolean | Promise<void | boolean>;
@@ -223,6 +223,7 @@ async function downloadUbuntuWsl(dir: string) {
         }
       }
       await extractUbuntu(dir);
+      console.info("Ubuntu extracted.");
     } finally {
       //await rm(tmpDir, { force: true, recursive: true });
     }
@@ -230,15 +231,11 @@ async function downloadUbuntuWsl(dir: string) {
 }
 
 async function extractUbuntu(dir: string) {
-  const tmpDir = path.join(dir, INSTALL_TEMP_DIR);
   const installDir = path.join(dir, INSTALL_DIR);
-
   const ubuntuDownloadFile = path.join(dir, INSTALL_UBUNTU_DOWNLOAD_FILE);
-
   const extractPath = path.join(dir, INSTALL_UBUNTU_X86_DEST_FILE);
 
   await extractUbuntuOuter(ubuntuDownloadFile, extractPath);
-
   await extractUbuntuInner(extractPath, installDir);
 }
 
@@ -253,11 +250,11 @@ function extractUbuntuOuter(ubuntuDownloadFile: string, extractPath: string) {
       rej(err);
     });
     zip.on("entry", function (entry) {
-      if (entry.name === INSTALL_UBUNTU_X86_SOURCE_FILE) {
-        subTaskHeader(`Extracting '${INSTALL_UBUNTU_X86_SOURCE_FILE}'`);
+      if (INSTALL_UBUNTU_X86_SOURCE_FILE.test(entry.name)) {
+        console.info(`Extracting '${entry.name}'...`);
         zip.extract(entry, extractPath, (err, r) => {
           if (!err) {
-            subTaskFooter(`Extracted '${INSTALL_UBUNTU_X86_SOURCE_FILE}'`);
+            console.info(`Extracted '${entry.name}'`);
             res();
           } else {
             rej(err);
@@ -280,7 +277,7 @@ function extractUbuntuInner(ubuntuZipPath: string, installDir: string) {
     let count = zip.entriesCount;
 
     zip.on("entry", async function (entry) {
-      subTaskHeader(`Extracting '${entry.name}'`);
+      console.info(`Extracting '${entry.name}'...`);
       const ePath = path.normalize(path.join(installDir, entry.name));
       if (ePath.startsWith(installDir)) {
         if (entry.isFile) {
@@ -288,7 +285,7 @@ function extractUbuntuInner(ubuntuZipPath: string, installDir: string) {
           zip.extract(entry, ePath, (err, r) => {
             count--;
             if (!err) {
-              subTaskFooter(`Extracted '${ePath}'`);
+              console.info(`Extracted '${entry.name}'`);
             } else {
               console.error(err);
             }
