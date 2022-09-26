@@ -42,5 +42,5 @@ setlocal
 :nodeReady
   call set PATH=%PATH%;C:\Program Files\nodejs;%appdata%s\npm
   call npm install --location=global typescript ts-node @cpdevtools/development-host@latest
-  call %appdata%s\npm\devhost.cmd install
+  call %appdata%\npm\devhost.cmd install
 endlocal
