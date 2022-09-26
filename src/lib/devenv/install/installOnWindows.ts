@@ -1,4 +1,12 @@
-import { installWSL, isWslInstalled, rebootWindows, runOnceAfterRestart } from "@cpdevtools/lib-node-utilities";
+import {
+  getWslVersion,
+  installWSL,
+  installWSLKernelUpdate,
+  isWslInstalled,
+  rebootWindows,
+  runOnceAfterRestart,
+  updateWSL,
+} from "@cpdevtools/lib-node-utilities";
 import { writeFile } from "fs/promises";
 import path from "path";
 
@@ -9,7 +17,6 @@ export async function installOnWindows() {
 async function _installWsl() {
   const isInstalled = await isWslInstalled();
   if (!isInstalled) {
-    console.log("Installing wsl");
     if (await installWSL()) {
       const p = path.join(process.env["temp"] ?? "", "resumeInstall.cmd");
       await writeFile(p, "devhost install", { encoding: "utf-8" });
@@ -17,6 +24,13 @@ async function _installWsl() {
       await rebootWindows(true);
     }
   } else {
-    console.log("wsl installed");
+    const ver = await getWslVersion();
+    if (ver!.major === 1) {
+      // update kernel
+      await installWSLKernelUpdate();
+    } else if (ver!.compare("5.10.102") < 0) {
+      // update
+      await updateWSL();
+    }
   }
 }
