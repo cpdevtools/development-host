@@ -1,7 +1,7 @@
 import { importChalk } from "@cpdevtools/lib-node-utilities";
 import { CommandModule } from "yargs";
 import { applicationHeader } from "../../../..//lib/devenv/ui/headers";
-import { install } from "../../../../lib/devenv/install/install";
+import { installOnLinux } from "../../../../lib/devenv/install/installOnLinux";
 
 export const InstallCommand: CommandModule = {
   command: "install",
@@ -10,6 +10,6 @@ export const InstallCommand: CommandModule = {
   handler: async (args): Promise<void> => {
     const chalk = await importChalk();
     console.info(applicationHeader(`Development Container Host\n${chalk.grey("Installer")}`));
-    install();
+    installOnLinux();
   },
 };
