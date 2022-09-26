@@ -1,5 +1,5 @@
 import { CommandModule } from "yargs";
-import { installOnWindows } from "../../../../lib/devenv/install/install";
+import { installOnWindows } from "../../../../lib/devenv/install/installOnWindows";
 
 export const PostInstallCommand: CommandModule = {
   command: "install",
