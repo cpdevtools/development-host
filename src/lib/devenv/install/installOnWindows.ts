@@ -5,6 +5,7 @@ import {
   importInquirer,
   installWSL,
   installWSLKernelUpdate,
+  isInstalledWsl,
   isValidInstallFile,
   isWslDistroInstalled,
   isWslInstalled,
@@ -31,7 +32,14 @@ import {
 } from "./constants";
 
 export async function installOnWindows() {
+  await _installVsCode();
   await _installWsl();
+}
+
+async function _installVsCode() {
+  if (!(await isInstalledWsl("Microsoft.VisualStudioCode"))) {
+    await exec("winget.exe install -e  --scope machine --id Microsoft.VisualStudioCode");
+  }
 }
 
 async function _installWsl() {
