@@ -1,6 +1,6 @@
 {
   "name": "@cpdevtools/development-host",
-  "version": "0.4.81",
+  "version": "0.4.82",
   "repository": "https://github.com/cpdevtools/development-host",
   "typings": "./index.d.ts",
   "main": "./index.js",
@@ -72,6 +72,7 @@
     "glob": "^8.0.3",
     "ini": "^3.0.0",
     "inquirer": "9",
+    "is-wsl": "^2.2.0",
     "linq": "^4.0.0",
     "lodash": "^4.17.21",
     "node-stream-zip": "^1.15.0",
