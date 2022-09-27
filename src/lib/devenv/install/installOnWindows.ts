@@ -19,15 +19,16 @@ import ini from "ini";
 import Zip from "node-stream-zip";
 import path from "path";
 import { subTaskFooter, subTaskHeader } from "../ui/headers";
-
-export const INSTALL_NAME = "DevelopmentContainerHost";
-const INSTALL_TEMP_DIR = ".temp";
-const INSTALL_DIR = "install";
-const INSTALL_ID = "Canonical.Ubuntu.2204";
-const INSTALL_UBUNTU_DOWNLOAD_FILE = path.join(INSTALL_TEMP_DIR, "ubuntu.bundle.zip");
-const INSTALL_UBUNTU_X86_DEST_FILE = path.join(INSTALL_TEMP_DIR, "ubuntu.x86.zip");
-const INSTALL_UBUNTU_X86_SOURCE_FILE = /Ubuntu_2204\..*?_x64\.appx/;
-const INSTALL_UBUNTU_INSTALL_FILE = path.join(INSTALL_DIR, "install.tar.gz");
+import {
+  INSTALL_DIR,
+  INSTALL_ID,
+  INSTALL_NAME,
+  INSTALL_TEMP_DIR,
+  INSTALL_UBUNTU_DOWNLOAD_FILE,
+  INSTALL_UBUNTU_INSTALL_FILE,
+  INSTALL_UBUNTU_X86_DEST_FILE,
+  INSTALL_UBUNTU_X86_SOURCE_FILE,
+} from "./constants";
 
 export async function installOnWindows() {
   await _installWsl();
@@ -55,6 +56,7 @@ async function _installWsl() {
     if (!(await _isContainerHostInstalled())) {
       await _installUbuntuWsl();
     }
+    await _installCliOnLinux();
   }
 }
 
@@ -82,6 +84,12 @@ async function _installUbuntuWsl() {
   await exec(`wsl.exe --import ${INSTALL_NAME} ${dir} ${path.join(dir, "install", "install.tar.gz")} `);
   await _setupUser();
   subTaskFooter(`Initialized Ubuntu.`);
+}
+
+async function _installCliOnLinux() {
+  await exec(
+    `wsl.exe -d ${INSTALL_NAME} --cd ~ bash -ic "curl https://raw.githubusercontent.com/cpdevtools/development-host/main/install/linux/install.sh | bash"`
+  );
 }
 
 async function _setupUser() {
