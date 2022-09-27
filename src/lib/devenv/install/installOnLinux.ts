@@ -20,7 +20,7 @@ import { INSTALL_NAME } from "./constants";
 
 export async function installOnLinux() {
   await _instalWsl();
-  //await installOrUpdateCore();
+  await installOrUpdateCore();
   // await promptConfig(true);
   // await onStartup();
 }
